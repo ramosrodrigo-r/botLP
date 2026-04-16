@@ -17,7 +17,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.90.0",
+    "openai": "^4.98.0",
     "@ikatec/digisac-api-sdk": "^2.1.1",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
