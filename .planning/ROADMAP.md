@@ -29,7 +29,11 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. A new lead's first message triggers an AI disclosure message identifying the bot as IA, followed by LGPD consent prompt before any data collection begins
   4. Every AI response — regardless of content — has the no-legal-advice disclaimer appended in code (visible in test output, not just in system prompt)
   5. Server startup fails fast with a clear error if any required env var (DIGISAC_TOKEN, ANTHROPIC_API_KEY, etc.) is missing
-**Plans**: TBD
+**Plans:** 3 plans
+Plans:
+- [ ] 01-01-PLAN.md — Bootstrap TS project, Zod env validation, pino logger, SDK type re-exports, AI stub
+- [ ] 01-02-PLAN.md — Digisac SDK service wrapper + compliance service (disclosure, LGPD consent, disclaimer append)
+- [ ] 01-03-PLAN.md — Express server + rate-limited webhook route with timing-safe token validation + 4-guard handler (human-verify checkpoint)
 
 ### Phase 2: Conversation History + AI Pipeline
 **Goal**: A working multi-turn conversation loop — WhatsApp message arrives, conversation history loads with mutex lock, Claude is called with full context, reply is sent to lead via Digisac, history is updated — with deduplication and 429 fallback handling
@@ -73,7 +77,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Webhook Infrastructure + Compliance Foundation | 0/TBD | Not started | - |
+| 1. Webhook Infrastructure + Compliance Foundation | 0/3 | Not started | - |
 | 2. Conversation History + AI Pipeline | 0/TBD | Not started | - |
 | 3. Lead Qualification + Handoff | 0/TBD | Not started | - |
 | 4. Production Hardening | 0/TBD | Not started | - |
