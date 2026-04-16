@@ -33,7 +33,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 Plans:
 - [x] 01-01-PLAN.md — Bootstrap TS project, Zod env validation, pino logger, SDK type re-exports, AI stub
 - [x] 01-02-PLAN.md — Digisac SDK service wrapper + compliance service (disclosure, LGPD consent, disclaimer append)
-- [ ] 01-03-PLAN.md — Express server + rate-limited webhook route with timing-safe token validation + 4-guard handler (human-verify checkpoint)
+- [x] 01-03-PLAN.md — Express server + rate-limited webhook route with timing-safe token validation + 4-guard handler (human-verify checkpoint)
 
 ### Phase 2: Conversation History + AI Pipeline
 **Goal**: A working multi-turn conversation loop — WhatsApp message arrives, conversation history loads with mutex lock, Claude is called with full context, reply is sent to lead via Digisac, history is updated — with deduplication and 429 fallback handling
