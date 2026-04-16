@@ -13,9 +13,9 @@ const EnvSchema = z.object({
   DIGISAC_SERVICE_ID: z.string().min(1),
   WEBHOOK_SECRET: z.string().min(16, 'WEBHOOK_SECRET must be at least 16 characters (entropy requirement)'),
 
-  // Anthropic (validated now even though AI pipeline is Phase 2 — fail-fast per OBS-02)
-  ANTHROPIC_API_KEY: z.string().startsWith('sk-ant-', 'ANTHROPIC_API_KEY must start with sk-ant-'),
-  CLAUDE_MODEL: z.string().default('claude-sonnet-4-6'),
+  // OpenAI (validated now even though AI pipeline is Phase 2 — fail-fast per OBS-02)
+  OPENAI_API_KEY: z.string().startsWith('sk-', 'OPENAI_API_KEY must start with sk-'),
+  OPENAI_MODEL: z.string().default('gpt-4o'),
 
   // Compliance texts (D-02, D-03 — placeholder values in .env.example, stakeholder review before production)
   DISCLOSURE_MESSAGE: z.string().min(1),
