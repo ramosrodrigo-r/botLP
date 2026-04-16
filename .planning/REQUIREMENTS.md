@@ -16,10 +16,10 @@
 
 ### Compliance (OAB + LGPD)
 
-- [ ] **COMP-01**: Bot envia mensagem de disclosure na primeira interação de cada contato, identificando-se como IA
-- [ ] **COMP-02**: Bot apresenta termo de consentimento LGPD e aguarda confirmação antes de iniciar a qualificação (coletar dados pessoais)
-- [ ] **COMP-03**: Código appenda disclaimer "não constitui aconselhamento jurídico" ao final de toda resposta da IA (não apenas no prompt)
-- [ ] **COMP-04**: System prompt instrui a IA a usar linguagem meramente informativa — sem opinar, prometer resultados ou recomendar ações (OAB Provimento 205/2021)
+- [x] **COMP-01**: Bot envia mensagem de disclosure na primeira interação de cada contato, identificando-se como IA
+- [x] **COMP-02**: Bot apresenta termo de consentimento LGPD e aguarda confirmação antes de iniciar a qualificação (coletar dados pessoais)
+- [x] **COMP-03**: Código appenda disclaimer "não constitui aconselhamento jurídico" ao final de toda resposta da IA (não apenas no prompt)
+- [x] **COMP-04**: System prompt instrui a IA a usar linguagem meramente informativa — sem opinar, prometer resultados ou recomendar ações (OAB Provimento 205/2021)
 
 ### Conversa & IA
 
@@ -48,7 +48,7 @@
 ### Observabilidade
 
 - [ ] **OBS-01**: Logs estruturados com pino incluindo: contactId, tipo de evento, request-id Anthropic, erros com stack trace
-- [ ] **OBS-02**: Variáveis de ambiente validadas na inicialização do servidor (falha rápido se faltarem credenciais)
+- [x] **OBS-02**: Variáveis de ambiente validadas na inicialização do servidor (falha rápido se faltarem credenciais)
 
 ## v2 Requirements
 
@@ -88,10 +88,10 @@
 | WBHK-04 | Phase 1 | Pending |
 | WBHK-05 | Phase 1 | Pending |
 | WBHK-06 | Phase 1 | Pending |
-| COMP-01 | Phase 1 | Pending |
-| COMP-02 | Phase 1 | Pending |
-| COMP-03 | Phase 1 | Pending |
-| COMP-04 | Phase 1 | Pending |
+| COMP-01 | Phase 1 | Complete |
+| COMP-02 | Phase 1 | Complete |
+| COMP-03 | Phase 1 | Complete |
+| COMP-04 | Phase 1 | Complete |
 | CONV-01 | Phase 2 | Pending |
 | CONV-02 | Phase 2 | Pending |
 | CONV-03 | Phase 2 | Pending |
@@ -108,7 +108,7 @@
 | HAND-04 | Phase 3 | Pending |
 | HAND-05 | Phase 3 | Pending |
 | OBS-01 | Phase 1 | Pending |
-| OBS-02 | Phase 1 | Pending |
+| OBS-02 | Phase 1 | Complete |
 
 **Coverage:**
 - v1 requirements: 27 total
