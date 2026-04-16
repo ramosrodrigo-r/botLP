@@ -31,7 +31,7 @@ Decimal phases appear between their surrounding integers in numeric order.
   5. Server startup fails fast with a clear error if any required env var (DIGISAC_TOKEN, ANTHROPIC_API_KEY, etc.) is missing
 **Plans:** 3 plans
 Plans:
-- [ ] 01-01-PLAN.md — Bootstrap TS project, Zod env validation, pino logger, SDK type re-exports, AI stub
+- [x] 01-01-PLAN.md — Bootstrap TS project, Zod env validation, pino logger, SDK type re-exports, AI stub
 - [ ] 01-02-PLAN.md — Digisac SDK service wrapper + compliance service (disclosure, LGPD consent, disclaimer append)
 - [ ] 01-03-PLAN.md — Express server + rate-limited webhook route with timing-safe token validation + 4-guard handler (human-verify checkpoint)
 
