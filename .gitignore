@@ -1,0 +1,22 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Environment (NEVER commit real secrets — CLAUDE.md Constraint)
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+npm-debug.log*
+
+# Runtime data
+*.pid
+
+# IDE
+.vscode/
+.idea/
+.DS_Store
