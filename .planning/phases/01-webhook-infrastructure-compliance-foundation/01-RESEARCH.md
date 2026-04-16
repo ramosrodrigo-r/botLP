@@ -81,7 +81,7 @@ src/
 | COMP-02 | Bot apresenta termo de consentimento LGPD e aguarda confirmação antes de iniciar a qualificação | D-05/D-06: `consentGiven: boolean` flag per contactId in memory; any response = implicit consent |
 | COMP-03 | Código appenda disclaimer ao final de toda resposta da IA (não apenas no prompt) | D-04: `complianceService.appendDisclaimer(text)` appends `\n\n---\n⚠️ ${LEGAL_DISCLAIMER}` — must be called in code, never omittable |
 | COMP-04 | System prompt instrui a IA a usar linguagem meramente informativa (OAB Provimento 205/2021) | `SYSTEM_PROMPT` env var with placeholder text enforcing informative-only language; verified D-02 |
-| OBS-01 | Logs estruturados com pino incluindo: contactId, tipo de evento, request-id Anthropic, erros com stack trace | `pino` ^10.3.1 + `pino-http` ^11.0.0; child logger `logger.child({ contactId })` pattern |
+| OBS-01 | Logs estruturados com pino incluindo: contactId, tipo de evento, request-id OpenAI, erros com stack trace | `pino` ^10.3.1 + `pino-http` ^11.0.0; child logger `logger.child({ contactId })` pattern |
 | OBS-02 | Variáveis de ambiente validadas na inicialização do servidor (falha rápido se faltarem credenciais) | `zod` ^4.3.6 schema in `utils/env.ts`; `z.object({...}).parse(process.env)` at module load; process.exit(1) on failure |
 </phase_requirements>
 
@@ -391,9 +391,9 @@ const EnvSchema = z.object({
   DIGISAC_API_TOKEN:    z.string().min(1),
   DIGISAC_SERVICE_ID:   z.string().min(1),
   WEBHOOK_SECRET:       z.string().min(16),   // enforce minimum entropy
-  // Anthropic
-  ANTHROPIC_API_KEY:    z.string().startsWith('sk-ant-'),
-  CLAUDE_MODEL:         z.string().default('claude-sonnet-4-6'),
+  // OpenAI
+  OPENAI_API_KEY:       z.string().startsWith('sk-'),
+  OPENAI_MODEL:         z.string().default('gpt-4o'),
   // Compliance texts (from D-02)
   DISCLOSURE_MESSAGE:   z.string().min(1),
   LGPD_CONSENT_MESSAGE: z.string().min(1),
@@ -618,8 +618,8 @@ const EnvSchema = z.object({
   DIGISAC_API_TOKEN:    z.string().min(1),
   DIGISAC_SERVICE_ID:   z.string().min(1),
   WEBHOOK_SECRET:       z.string().min(1),
-  ANTHROPIC_API_KEY:    z.string().min(1),
-  CLAUDE_MODEL:         z.string().default('claude-sonnet-4-6'),
+  OPENAI_API_KEY:       z.string().min(1),
+  OPENAI_MODEL:         z.string().default('gpt-4o'),
   DISCLOSURE_MESSAGE:   z.string().min(1),
   LGPD_CONSENT_MESSAGE: z.string().min(1),
   LEGAL_DISCLAIMER:     z.string().min(1),
@@ -675,9 +675,9 @@ DIGISAC_API_TOKEN=
 DIGISAC_SERVICE_ID=
 WEBHOOK_SECRET=
 
-# Anthropic
-ANTHROPIC_API_KEY=
-CLAUDE_MODEL=claude-sonnet-4-6
+# OpenAI
+OPENAI_API_KEY=
+OPENAI_MODEL=gpt-4o
 
 # Compliance texts (PLACEHOLDERS — review with escritório before production)
 DISCLOSURE_MESSAGE=Olá! Sou um assistente virtual do escritório de advocacia. Sou uma inteligência artificial e não sou um advogado. Este atendimento é informativo.
@@ -741,7 +741,7 @@ NODE_ENV=development
 | npm | Package manager | ✓ | 11.8.0 | — |
 | TypeScript (via tsx) | Development runner | Install required | — | — |
 | Digisac API credentials | WBHK-02, COMP-01 | Not in env yet | — | Use ngrok + test account for development |
-| Anthropic API key | COMP-04 (SYSTEM_PROMPT env var validation) | Not in env yet | — | Use placeholder for Phase 1 development |
+| OpenAI API key | COMP-04 (SYSTEM_PROMPT env var validation) | Not in env yet | — | Use placeholder for Phase 1 development |
 
 **Missing dependencies with no fallback:**
 - None that block Phase 1 implementation (all packages installable via npm)

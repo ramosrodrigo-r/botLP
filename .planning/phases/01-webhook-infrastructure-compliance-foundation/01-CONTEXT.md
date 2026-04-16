@@ -84,7 +84,7 @@ Requisitos cobertos: WBHK-01, WBHK-02, WBHK-03, WBHK-04, WBHK-05, WBHK-06, COMP-
 - `DIGISAC_IA_INTEGRATION.md` — Guia completo de integração Digisac + IA: payload do webhook (seção 8.5), endpoints da API Digisac (seção 8), estrutura sugerida (seção 5), env vars de referência (seção 7)
 
 ### Stack e bibliotecas
-- `CLAUDE.md` — Stack mandatória (Express 5, TypeScript, pino, zod, helmet, express-rate-limit, @ikatec/digisac-api-sdk, @anthropic-ai/sdk), padrões de código, e convenções do projeto
+- `CLAUDE.md` — Stack mandatória (Express 5, TypeScript, pino, zod, helmet, express-rate-limit, @ikatec/digisac-api-sdk, openai), padrões de código, e convenções do projeto
 
 ### Requisitos
 - `.planning/REQUIREMENTS.md` — Critérios de aceitação detalhados para WBHK-01 a WBHK-06, COMP-01 a COMP-04, OBS-01 a OBS-02

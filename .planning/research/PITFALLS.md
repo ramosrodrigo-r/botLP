@@ -1,8 +1,8 @@
 # Domain Pitfalls — WhatsApp AI Bot + Law Firm
 
-**Domain:** WhatsApp webhook bot with AI (Claude API) + human handoff + law firm constraints
+**Domain:** WhatsApp webhook bot with AI (OpenAI API) + human handoff + law firm constraints
 **Researched:** 2026-04-16
-**Sources:** Anthropic official rate-limit docs, OWASP GenAI Top 10 2025, Node.js concurrency patterns, WhatsApp webhook community post-mortems, legal AI liability analysis
+**Sources:** OpenAI official rate-limit docs, OWASP GenAI Top 10 2025, Node.js concurrency patterns, WhatsApp webhook community post-mortems, legal AI liability analysis
 
 ---
 
@@ -15,13 +15,13 @@ Mistakes that cause the bot to send floods of messages, break handoff, or expose
 ### Pitfall 1: Infinite Response Loop (Bot Responding to Its Own Messages)
 
 **What goes wrong:**
-When the bot sends a reply via the Digisac API, Digisac fires a new webhook event for that outgoing message. If the handler doesn't filter it out, the bot calls Claude, gets a new reply, sends it, which fires another webhook, which calls Claude again — infinitely. In practice this generates dozens of messages to the lead in seconds.
+When the bot sends a reply via the Digisac API, Digisac fires a new webhook event for that outgoing message. If the handler doesn't filter it out, the bot calls OpenAI, gets a new reply, sends it, which fires another webhook, which calls OpenAI again — infinitely. In practice this generates dozens of messages to the lead in seconds.
 
 **Why it happens:**
 The `isFromMe: true` check is documented but easy to miss or misconfigure. A second trigger is human agents replying after handoff — their messages also arrive as webhook events. Digisac's documentation also references an `origin` field that distinguishes bot/human/API-sent messages; relying solely on `isFromMe` is not enough if agents also send messages through the same service.
 
 **Consequences:**
-Lead receives 10-100 identical or nonsensical messages. Digisac may throttle or ban the sending number. Claude API bill spikes instantly.
+Lead receives 10-100 identical or nonsensical messages. Digisac may throttle or ban the sending number. OpenAI API bill spikes instantly.
 
 **Prevention:**
 ```
@@ -36,7 +36,7 @@ Also log the raw `origin` field from Digisac payloads during development to unde
 
 **Warning signs:**
 - Log showing the same `contactId` processed more than twice in 5 seconds
-- Claude API usage spike with no new leads
+- OpenAI API usage spike with no new leads
 - Lead complaining about message flood
 
 **Phase:** Phase 1 (webhook handler) — must be the very first guard, before any async work.
@@ -46,10 +46,10 @@ Also log the raw `origin` field from Digisac payloads during development to unde
 ### Pitfall 2: Webhook Duplicate Delivery (Digisac Retries on Slow Response)
 
 **What goes wrong:**
-Webhook providers use "at least once" delivery semantics. If your server takes longer than the provider's timeout to respond with HTTP 200 (typically 5-15 seconds), Digisac retries the same event. Since your server is doing a Claude API call (1-5 seconds) synchronously before returning 200, slow Claude responses will cause duplicates on every message.
+Webhook providers use "at least once" delivery semantics. If your server takes longer than the provider's timeout to respond with HTTP 200 (typically 5-15 seconds), Digisac retries the same event. Since your server is doing an OpenAI API call (1-5 seconds) synchronously before returning 200, slow OpenAI responses will cause duplicates on every message.
 
 **Why it happens:**
-The naive implementation pattern is: receive webhook → call Claude → send reply → return 200. This holds the HTTP connection open during the Claude call. Under normal load it works. Under Claude latency spikes (occasional 5-8 second responses) or if your server is on a cold-start host (Render free tier), you regularly exceed the timeout.
+The naive implementation pattern is: receive webhook → call OpenAI → send reply → return 200. This holds the HTTP connection open during the OpenAI call. Under normal load it works. Under OpenAI latency spikes (occasional 5-8 second responses) or if your server is on a cold-start host (Render free tier), you regularly exceed the timeout.
 
 **Consequences:**
 The lead receives the same AI reply 2-3 times. Worse: the history grows with duplicate entries, poisoning future context.
@@ -74,7 +74,7 @@ For a single-instance deployment (Railway/VPS), in-memory deduplication is suffi
 **Warning signs:**
 - Logs showing the same `message.id` processed twice
 - Leads reporting double messages
-- Claude API call count higher than lead message count
+- OpenAI API call count higher than lead message count
 
 **Phase:** Phase 1 (webhook infrastructure) — the `res.status(200)` early-return is a one-line fix; the deduplication Set is ~10 lines. Both belong in the initial implementation.
 
@@ -83,13 +83,13 @@ For a single-instance deployment (Railway/VPS), in-memory deduplication is suffi
 ### Pitfall 3: Race Condition in Conversation History (Two Messages Arriving Simultaneously)
 
 **What goes wrong:**
-A lead sends two messages in quick succession ("Oi" then "quero info sobre divórcio"). Both webhooks arrive within milliseconds. Both read the conversation history at the same time (same state), both call Claude concurrently, both append to history. The history ends up with: [user: "Oi", assistant: reply-A, user: "quero info...", assistant: reply-B, user: "quero info...", assistant: reply-C]. The second message is processed twice with broken history interleaving.
+A lead sends two messages in quick succession ("Oi" then "quero info sobre divórcio"). Both webhooks arrive within milliseconds. Both read the conversation history at the same time (same state), both call OpenAI concurrently, both append to history. The history ends up with: [user: "Oi", assistant: reply-A, user: "quero info...", assistant: reply-B, user: "quero info...", assistant: reply-C]. The second message is processed twice with broken history interleaving.
 
 **Why it happens:**
-JavaScript is single-threaded but asynchronous operations (the Claude API call) yield the event loop. Two webhook handlers can both read `conversationHistory.get(contactId)` before either writes back. Classic read-modify-write race.
+JavaScript is single-threaded but asynchronous operations (the OpenAI API call) yield the event loop. Two webhook handlers can both read `conversationHistory.get(contactId)` before either writes back. Classic read-modify-write race.
 
 **Consequences:**
-Duplicate responses. Corrupted history causing Claude to give incoherent responses in the same session. History size grows faster than expected.
+Duplicate responses. Corrupted history causing OpenAI to give incoherent responses in the same session. History size grows faster than expected.
 
 **Prevention:**
 Use a per-contactId mutex (async-mutex library, ~200 bytes, no external dependencies):
@@ -107,7 +107,7 @@ function getMutex(contactId) {
 async function processMessage(contactId, text) {
   const release = await getMutex(contactId).acquire();
   try {
-    // read history, call Claude, append result, send reply
+    // read history, call OpenAI, append result, send reply
   } finally {
     release(); // ALWAYS release, even on error
   }
@@ -124,30 +124,30 @@ The mutex map itself can grow unbounded (see Pitfall 5) — clean up mutexes for
 
 ---
 
-### Pitfall 4: Claude API Rate Limits Causing Silent Failures
+### Pitfall 4: OpenAI API Rate Limits Causing Silent Failures
 
 **What goes wrong:**
-Tier 1 accounts (new API key, less than $5 deposited) are limited to 50 RPM and 30,000 ITPM for Claude Sonnet 4.x. A law firm with active leads can easily hit this. The API returns HTTP 429 with a `retry-after` header. If the code doesn't handle this, the bot silently drops replies: the lead asks a question and gets no response.
+Free/low-tier accounts may have limited RPM and TPM for gpt-4o. A law firm with active leads can easily hit this. The API returns HTTP 429 with a `retry-after` header. If the code doesn't handle this, the bot silently drops replies: the lead asks a question and gets no response.
 
 **Why it happens:**
-New Anthropic accounts start at Tier 1. Each message with conversation history accumulates input tokens — a 10-turn conversation sends the full history each time, growing token usage rapidly. Additionally, 429 and 529 errors are different: 429 is a rate limit (wait `retry-after` seconds); 529 is server overload (back off differently). Conflating them leads to wrong retry behavior.
+New OpenAI accounts may start with lower rate limits. Each message with conversation history accumulates input tokens — a 10-turn conversation sends the full history each time, growing token usage rapidly. Additionally, 429 errors should be distinguished from transient 5xx errors — conflating them leads to wrong retry behavior.
 
 **Consequences:**
 Lead asks a question, bot goes silent. No error to the user, just nothing. From the lead's perspective the bot is broken.
 
 **Prevention:**
-- The `@anthropic-ai/sdk` has built-in `maxRetries` — set it to 2 at client initialization. This handles transient 529s automatically.
+- The `openai` SDK has built-in `maxRetries` — set it to 2 at client initialization. This handles transient 5xx errors automatically.
 - For 429s, respect the `retry-after` header. Do not retry before it expires.
 - On failure after retries: send a fallback message to the lead ("Desculpe, estou com dificuldades técnicas. Um atendente entrará em contato em breve.") and trigger handoff for that contact.
-- Monitor the `anthropic-ratelimit-requests-remaining` response header — log a warning when it drops below 10.
-- Upgrade to Tier 2 ($40 deposit) before going to production. Tier 2 raises the limit to 1,000 RPM.
+- Monitor the `x-ratelimit-remaining-requests` response header — log a warning when it drops below 10.
+- Verify account usage limits in the OpenAI dashboard before going to production.
 
 **Warning signs:**
 - 429 errors in logs without a corresponding fallback message
 - Leads reporting no response after asking a question
-- `anthropic-ratelimit-requests-remaining: 0` in response headers
+- `x-ratelimit-remaining-requests: 0` in response headers
 
-**Phase:** Phase 3 (Claude service) — wrap all `anthropic.messages.create()` calls in try/catch with explicit 429 handling and fallback message logic.
+**Phase:** Phase 3 (OpenAI service) — wrap all `client.chat.completions.create()` calls in try/catch with explicit 429 handling and fallback message logic.
 
 ---
 
@@ -197,7 +197,7 @@ Cap history in two dimensions:
 ### Pitfall 6: AI Hallucinating Legal Information (Law Firm Liability Risk)
 
 **What goes wrong:**
-Claude, even with a restrictive system prompt, may:
+GPT-4o, even with a restrictive system prompt, may:
 - Invent specific legal statutes, deadlines, or case precedents
 - Give confident-sounding answers to questions like "Tenho direito ao divórcio em 30 dias?"
 - Fail to route to human when it should, because it generates a plausible-sounding answer instead of admitting uncertainty
@@ -216,7 +216,7 @@ Required system prompt elements:
 1. **Hard prohibition:** "Você NUNCA deve dar opiniões jurídicas definitivas, interpretar legislação específica, ou afirmar o que o cliente tem ou não direito de fazer."
 2. **Uncertainty surfacing:** "Quando não tiver certeza de uma resposta, diga explicitamente 'Não tenho como confirmar isso com precisão' e transfira para um advogado."
 3. **Scope definition:** List exactly what the bot CAN do (inform about areas of practice, schedule callbacks, explain general process timelines at a high level).
-4. **Disclaimer in every response:** Append a standard disclaimer to every message via code, not just prompt instruction — Claude may omit it. Do this in the handler, not in the prompt:
+4. **Disclaimer in every response:** Append a standard disclaimer to every message via code, not just prompt instruction — the model may omit it. Do this in the handler, not in the prompt:
    ```javascript
    const LEGAL_DISCLAIMER = '\n\n_Este atendimento é informativo. Não constitui aconselhamento jurídico._';
    const reply = aiResponse + LEGAL_DISCLAIMER;
@@ -230,7 +230,7 @@ Test the system prompt weekly with adversarial inputs: "Mas você pode me dizer 
 - Responses without the disclaimer appended
 - Prompt injection attempts in logs (leads trying to override the system prompt)
 
-**Phase:** Phase 1 (system prompt) and Phase 3 (Claude service) — disclaimer append belongs in code, not just prompt. Adversarial testing belongs in every phase review.
+**Phase:** Phase 1 (system prompt) and Phase 3 (OpenAI service) — disclaimer append belongs in code, not just prompt. Adversarial testing belongs in every phase review.
 
 ---
 
@@ -280,12 +280,12 @@ For v1 (no database), accept the restart-clears-state limitation but make it exp
 ### Pitfall 8: Token Bloat from Long Conversation History
 
 **What goes wrong:**
-Each Claude API call sends the full conversation history. A 20-turn conversation at 200 tokens/message = 4,000 input tokens per call. That alone consumes 13% of Tier 1's 30,000 ITPM in a single conversation. With 3-4 active leads simultaneously, you hit the token rate limit before the request rate limit.
+Each OpenAI API call sends the full conversation history. A 20-turn conversation at 200 tokens/message = 4,000 input tokens per call. With 3-4 active leads simultaneously, you can hit the token rate limit before the request rate limit.
 
 **Prevention:**
-Cap history at 10 turns (20 messages) as per Pitfall 5. Consider using Claude's prompt caching for the system prompt (it is static and can be cached), which avoids counting those tokens toward ITPM. Use `cache_control: { type: "ephemeral" }` on the system message — this is a one-line addition to the API call.
+Cap history at 10 turns (20 messages) as per Pitfall 5. The system prompt is prepended on every call but is static — keep it concise to minimize token overhead. History trimming to last 20 messages is the primary cost control.
 
-**Phase:** Phase 3 (Claude service) — add caching annotation to system prompt from day one.
+**Phase:** Phase 3 (OpenAI service) — build history cap in from day one.
 
 ---
 
@@ -320,7 +320,7 @@ Keep history bounded (Pitfall 5 prevents this from becoming a real issue). Do no
 ### Pitfall 11: Responding to Non-Text Messages (Audio, Image, Document)
 
 **What goes wrong:**
-Digisac delivers all message types via webhook. If the type filter (`type === 'text'`) is missing or fails, the bot tries to send the message content (which may be a URL, base64 blob, or null) to Claude. Claude may respond with a confusing message. More likely: the code throws an error trying to access `.text` on a non-text payload.
+Digisac delivers all message types via webhook. If the type filter (`type === 'text'`) is missing or fails, the bot tries to send the message content (which may be a URL, base64 blob, or null) to OpenAI. The model may respond with a confusing message. More likely: the code throws an error trying to access `.text` on a non-text payload.
 
 **Prevention:**
 Explicitly check `data.type === 'text'` and return 200 with `{ ignored: true, reason: 'non-text' }` for everything else. Log the type for monitoring.
@@ -337,7 +337,7 @@ The reference code uses `max_tokens: 1024`. A formal legal-context response expl
 **Prevention:**
 Use `max_tokens: 2048` as the baseline for a law firm context. Check `response.stop_reason` — if it is `max_tokens` instead of `end_turn`, log a warning; the reply was truncated. Do not go below 1024.
 
-**Phase:** Phase 3 (Claude service).
+**Phase:** Phase 3 (OpenAI service).
 
 ---
 
@@ -358,12 +358,12 @@ Use Railway (paid, no cold start) or a VPS for production. If Render is used for
 | Phase Topic | Likely Pitfall | Mitigation |
 |-------------|----------------|------------|
 | Webhook handler (Phase 1) | Loop: missing `isFromMe` guard | First guard before any async work |
-| Webhook handler (Phase 1) | Duplicates: synchronous Claude call before 200 | Return 200 immediately, process async |
+| Webhook handler (Phase 1) | Duplicates: synchronous OpenAI call before 200 | Return 200 immediately, process async |
 | History module (Phase 2) | Race condition: concurrent same-contact messages | Per-contactId mutex with `async-mutex` |
 | History module (Phase 2) | Memory leak: unbounded Map growth | TTL eviction + per-contact message cap |
-| Claude service (Phase 3) | Silent failure on 429 | Catch 429, respect `retry-after`, send fallback message |
-| Claude service (Phase 3) | Token bloat hitting ITPM before RPM | Cache system prompt, cap history turns |
-| Claude service (Phase 3) | Legal hallucination | System prompt hard constraints + code-level disclaimer append |
+| OpenAI service (Phase 3) | Silent failure on 429 | Catch 429, respect `retry-after`, send fallback message |
+| OpenAI service (Phase 3) | Token bloat hitting TPM limit | Cap history turns to 20 messages |
+| OpenAI service (Phase 3) | Legal hallucination | System prompt hard constraints + code-level disclaimer append |
 | Handoff module (Phase 4) | State lost on restart | SIGTERM persistence to file, auto-expiry |
 | Handoff module (Phase 4) | Bot resumes mid-human conversation | Restart loads paused state from file |
 | System prompt (Phase 1+) | Prompt injection from leads | Adversarial testing, hardened prompt, no dynamic injection of user-controlled text into system message |
@@ -372,8 +372,8 @@ Use Railway (paid, no cold start) or a VPS for production. If Render is used for
 
 ## Sources
 
-- [Anthropic Rate Limits Documentation](https://platform.claude.com/docs/en/api/rate-limits) — HIGH confidence, official
-- [Anthropic API Errors Documentation](https://platform.claude.com/docs/en/api/errors) — HIGH confidence, official
+- [OpenAI Rate Limits Documentation](https://platform.openai.com/docs/guides/rate-limits) — HIGH confidence, official
+- [OpenAI API Errors Documentation](https://platform.openai.com/docs/guides/error-codes) — HIGH confidence, official
 - [OWASP LLM01:2025 Prompt Injection](https://genai.owasp.org/llmrisk/llm01-prompt-injection/) — HIGH confidence, official
 - [n8n Community: Endless WhatsApp webhook execution loop](https://community.n8n.io/t/endless-execution-of-wa-n8n-webhook-call-against-single-message-and-sending-100s-of-repeated-messages/29536) — MEDIUM confidence, community post-mortem
 - [async-mutex npm package](https://www.npmjs.com/package/async-mutex) — HIGH confidence, official package docs

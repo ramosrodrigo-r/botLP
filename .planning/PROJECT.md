@@ -2,11 +2,11 @@
 
 ## What This Is
 
-Servidor Node.js + Express que integra o Digisac (WhatsApp) com a Claude API (Anthropic) para atender leads automaticamente. Quando um lead manda mensagem no WhatsApp, o bot responde com IA, mantém histórico da conversa e transfere para um atendente humano quando necessário. Desenvolvido para um escritório de advocacia específico.
+Servidor Node.js + Express que integra o Digisac (WhatsApp) com a OpenAI API para atender e qualificar leads automaticamente. Quando um lead manda mensagem no WhatsApp, o bot responde, coleta informações de qualificação (tipo de caso, urgência, intenção de contratar) e entrega o lead qualificado para o advogado fechar — transferindo para humano quando a IA não consegue avançar. Desenvolvido para um escritório de advocacia específico.
 
 ## Core Value
 
-O lead recebe resposta imediata e contextualizada no WhatsApp — sem esperar um advogado disponível — e é transferido para humano apenas quando a IA não consegue ajudar.
+O lead recebe resposta imediata, é qualificado pela IA (interesse, urgência, tipo de caso) e transferido para um advogado no momento certo — maximizando conversão sem sobrecarregar a equipe.
 
 ## Requirements
 
@@ -16,6 +16,8 @@ O lead recebe resposta imediata e contextualizada no WhatsApp — sem esperar um
 
 ### Active
 
+- [ ] Qualificar o lead durante a conversa: coletar nome, tipo de caso/área jurídica, urgência e intenção de contratar
+- [ ] Conduzir o fluxo de qualificação de forma natural (não parecer formulário) até ter informações suficientes para o advogado fechar
 - [ ] Receber webhooks do Digisac com mensagens de leads via WhatsApp
 - [ ] Validar origem do webhook (token de segurança) e ignorar mensagens próprias (isFromMe)
 - [ ] Manter histórico de conversa por contactId (contexto da IA entre mensagens)
@@ -38,7 +40,7 @@ O lead recebe resposta imediata e contextualizada no WhatsApp — sem esperar um
 ## Context
 
 - Integração com **Digisac** (plataforma brasileira de WhatsApp/CRM): webhook recebe eventos, API REST envia mensagens
-- Claude API via `@anthropic-ai/sdk` — modelo `claude-sonnet-4-6`
+- OpenAI API via `openai` SDK — modelo `gpt-4o`
 - Escritório de advocacia: tom formal, linguagem acessível, nunca dar opinião jurídica definitiva (risco ético/legal) — bot qualifica interesse, informa sobre áreas de atuação, agenda retorno com advogado
 - Histórico de conversa em memória (Map<contactId, messages[]>) — suficiente para sessões ativas, sem dependência de banco de dados em v1
 - Deploy-agnostic em v1 — código deve funcionar em Railway, VPS ou local sem alterações

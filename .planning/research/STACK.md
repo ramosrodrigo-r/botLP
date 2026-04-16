@@ -39,17 +39,17 @@ The `@ikatec/digisac-api-sdk` is a TypeScript-first package that ships `.d.ts` t
 
 **Do NOT use:** The Ruby gem `douglara/digisac` (Ruby, not Node.js), bare `axios` calls to Digisac (works but you lose typing, have to hand-write all request shapes, and miss future API changes).
 
-### Anthropic / Claude
+### OpenAI
 
 | Library | Version | Purpose | Why |
 |---------|---------|---------|-----|
-| @anthropic-ai/sdk | ^0.90.0 | Claude API | Official SDK; `client.messages.create()` accepts `messages: [{role, content}][]` directly — maps 1:1 to the in-memory history array pattern |
+| openai | ^4.98.0 | OpenAI API | Official SDK; `client.chat.completions.create()` accepts `messages: [{role, content}][]` directly — maps 1:1 to the in-memory history array pattern |
 
-**Confidence: HIGH** — Verified via Context7 (`/anthropics/anthropic-sdk-typescript`). The SDK handles retries, timeout, streaming, and type-narrows all response shapes. Version 0.90.0 confirmed on npm.
+**Confidence: HIGH** — Verified via npm registry. The SDK handles retries, timeout, streaming, and type-narrows all response shapes. Version 4.98.0 confirmed on npm.
 
-The model ID for this project is `claude-sonnet-4-6` (per PROJECT.md). Pass it as `model: 'claude-sonnet-4-6'` — the SDK does not validate model strings, it forwards whatever you pass.
+The model ID for this project is `gpt-4o` (per PROJECT.md). Pass it as `model: 'gpt-4o'` — the SDK does not validate model strings, it forwards whatever you pass.
 
-**Do NOT use:** `axios` direct calls to `api.anthropic.com` — no benefit over the official SDK, and you lose retry logic, type safety, and streaming support.
+**Do NOT use:** `axios` direct calls to `api.openai.com` — no benefit over the official SDK, and you lose retry logic, type safety, and streaming support.
 
 ### Rate Limiting
 
@@ -126,22 +126,22 @@ The model ID for this project is `claude-sonnet-4-6` (per PROJECT.md). Pass it a
 
 ## Conversation History Pattern
 
-The in-memory pattern maps cleanly to the Anthropic SDK's message array shape:
+The in-memory pattern maps cleanly to the OpenAI SDK's message array shape:
 
 ```typescript
 // types.ts
-import type Anthropic from '@anthropic-ai/sdk'
+import type OpenAI from 'openai'
 
 type ConversationHistory = Map<
-  string,                                  // contactId
-  Anthropic.Messages.MessageParam[]        // [{role: 'user'|'assistant', content: string}]
+  string,                                              // contactId
+  OpenAI.Chat.ChatCompletionMessageParam[]             // [{role: 'user'|'assistant', content: string}]
 >
 
 const history: ConversationHistory = new Map()
 ```
 
 **Key decisions:**
-- Use `Anthropic.Messages.MessageParam[]` directly — no custom type needed, it's already exported by the SDK.
+- Use `OpenAI.Chat.ChatCompletionMessageParam[]` directly — no custom type needed, it's already exported by the SDK.
 - Cap history length: trim to the last N turns before each API call to control token costs. Recommended: last 20 messages (10 exchanges). Implemented as a slice, not a ring buffer, at this scale.
 - Never persist to disk. On restart, history resets — acceptable for v1 per PROJECT.md.
 - Key is `contactId` (string UUID from Digisac's `data.contactId` on the webhook payload).
@@ -155,7 +155,7 @@ const pausedContacts = new Set<string>()  // contactIds where bot is paused
 
 // Pause: add to set, send handoff message to contact, alert human agent
 // Resume: remove from set (manual or via future API endpoint)
-// Check: if (pausedContacts.has(contactId)) return early, do not call Claude
+// Check: if (pausedContacts.has(contactId)) return early, do not call OpenAI
 ```
 
 A `Set<string>` is the correct data structure — O(1) lookup, no dependencies. Do not use a database or Redis for this in v1.
@@ -167,7 +167,7 @@ A `Set<string>` is the correct data structure — O(1) lookup, no dependencies. 
 ```bash
 # Initialize project with TypeScript
 npm init -y
-npm install express @anthropic-ai/sdk @ikatec/digisac-api-sdk \
+npm install express openai @ikatec/digisac-api-sdk \
   pino pino-http express-rate-limit helmet dotenv zod
 
 npm install -D typescript tsx @types/node @types/express \
@@ -211,7 +211,7 @@ npm install -D typescript tsx @types/node @types/express \
 | Package | Version | Type |
 |---------|---------|------|
 | express | ^5.2.1 | prod |
-| @anthropic-ai/sdk | ^0.90.0 | prod |
+| openai | ^4.98.0 | prod |
 | @ikatec/digisac-api-sdk | ^2.1.1 | prod |
 | pino | ^10.3.1 | prod |
 | pino-http | ^11.0.0 | prod |
@@ -229,7 +229,7 @@ npm install -D typescript tsx @types/node @types/express \
 
 ## Sources
 
-- Anthropic TypeScript SDK: Context7 `/anthropics/anthropic-sdk-typescript` (HIGH confidence)
+- OpenAI TypeScript SDK: npm registry + Context7 `/openai/openai-node` (HIGH confidence)
 - `@ikatec/digisac-api-sdk`: Direct npm registry inspection + package source extraction, version 2.1.1 (HIGH confidence)
 - Digisac webhook payload structure: `pkg.go.dev/github.com/pericles-luz/go-base/pkg/digisac` (MEDIUM confidence — Go implementation mirrors JS payload; confirmed against SDK types)
 - express-rate-limit: `npmjs.com/package/express-rate-limit` v8.3.2, MDN Blog (HIGH confidence)

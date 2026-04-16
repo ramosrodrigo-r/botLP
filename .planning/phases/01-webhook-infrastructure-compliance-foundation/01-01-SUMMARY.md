@@ -18,7 +18,7 @@ dependency_graph:
 tech_stack:
   added:
     - express@5.2.1
-    - "@anthropic-ai/sdk@0.90.0"
+    - "openai@4.104.0"
     - "@ikatec/digisac-api-sdk@2.1.1"
     - pino@10.3.1
     - pino-http@11.0.0
@@ -78,7 +78,7 @@ TypeScript ESM project bootstrapped with NodeNext module resolution, Zod env val
 | Package | Version |
 |---------|---------|
 | express | 5.2.1 |
-| @anthropic-ai/sdk | 0.90.0 |
+| openai | 4.104.0 |
 | @ikatec/digisac-api-sdk | 2.1.1 |
 | pino | 10.3.1 |
 | pino-http | 11.0.0 |
@@ -104,8 +104,8 @@ TypeScript ESM project bootstrapped with NodeNext module resolution, Zod env val
 | DIGISAC_API_TOKEN | z.string().min(1) | — |
 | DIGISAC_SERVICE_ID | z.string().min(1) | — |
 | WEBHOOK_SECRET | z.string().min(16) | — |
-| ANTHROPIC_API_KEY | z.string().startsWith('sk-ant-') | — |
-| CLAUDE_MODEL | z.string() | claude-sonnet-4-6 |
+| OPENAI_API_KEY | z.string().startsWith('sk-') | — |
+| OPENAI_MODEL | z.string() | gpt-4o |
 | DISCLOSURE_MESSAGE | z.string().min(1) | — |
 | LGPD_CONSENT_MESSAGE | z.string().min(1) | — |
 | LEGAL_DISCLAIMER | z.string().min(1) | — |
@@ -156,4 +156,4 @@ No new security surface introduced beyond what the threat model covers. All T-01
 - Zod schema with `process.exit(1)` on failure (T-01-02)
 - `WEBHOOK_SECRET` enforced `min(16)` (T-01-03)
 - No compliance texts or API keys passed to logger in this plan (T-01-04)
-- `z.string().startsWith('sk-ant-')` on ANTHROPIC_API_KEY (T-01-05)
+- `z.string().startsWith('sk-')` on OPENAI_API_KEY (T-01-05)

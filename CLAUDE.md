@@ -3,7 +3,7 @@
 
 **botLP — Bot de Atendimento IA para Escritório de Advocacia**
 
-Servidor Node.js + Express que integra o Digisac (WhatsApp) com a Claude API (Anthropic) para atender e qualificar leads automaticamente. Quando um lead manda mensagem no WhatsApp, o bot responde, coleta informações de qualificação (tipo de caso, urgência, intenção de contratar) e entrega o lead qualificado para o advogado fechar — transferindo para humano quando a IA não consegue avançar. Desenvolvido para um escritório de advocacia específico.
+Servidor Node.js + Express que integra o Digisac (WhatsApp) com a OpenAI API para atender e qualificar leads automaticamente. Quando um lead manda mensagem no WhatsApp, o bot responde, coleta informações de qualificação (tipo de caso, urgência, intenção de contratar) e entrega o lead qualificado para o advogado fechar — transferindo para humano quando a IA não consegue avançar. Desenvolvido para um escritório de advocacia específico.
 
 **Core Value:** O lead recebe resposta imediata, é qualificado pela IA (interesse, urgência, tipo de caso) e transferido para um advogado no momento certo — maximizando conversão sem sobrecarregar a equipe.
 
@@ -31,10 +31,10 @@ Servidor Node.js + Express que integra o Digisac (WhatsApp) com a Claude API (An
 | Library | Version | Purpose | Why |
 |---------|---------|---------|-----|
 | @ikatec/digisac-api-sdk | ^2.1.1 | Digisac REST API client + webhook types | Only production-quality TypeScript SDK for Digisac; ships `WebhookPayload<E>`, `MessagesApi.create()`, `ContactsApi`, typed `CreateMessagePayload`. Published 2026-03-14, actively maintained by ikatec team. |
-### Anthropic / Claude
+### OpenAI
 | Library | Version | Purpose | Why |
 |---------|---------|---------|-----|
-| @anthropic-ai/sdk | ^0.90.0 | Claude API | Official SDK; `client.messages.create()` accepts `messages: [{role, content}][]` directly — maps 1:1 to the in-memory history array pattern |
+| openai | ^4.98.0 | OpenAI API | Official SDK; `client.chat.completions.create()` accepts `messages: [{role, content}][]` directly — maps 1:1 to the in-memory history array pattern |
 ### Rate Limiting
 | Library | Version | Purpose | Why |
 |---------|---------|---------|-----|
@@ -75,7 +75,7 @@ Servidor Node.js + Express que integra o Digisac (WhatsApp) com a Claude API (An
 | `morgan` | Superseded by `pino-http` once you're using pino. |
 | `express-validator` | Use Zod for type-safe validation. |
 ## Conversation History Pattern
-- Use `Anthropic.Messages.MessageParam[]` directly — no custom type needed, it's already exported by the SDK.
+- Use `OpenAI.Chat.ChatCompletionMessageParam[]` directly — no custom type needed, it's already exported by the SDK.
 - Cap history length: trim to the last N turns before each API call to control token costs. Recommended: last 20 messages (10 exchanges). Implemented as a slice, not a ring buffer, at this scale.
 - Never persist to disk. On restart, history resets — acceptable for v1 per PROJECT.md.
 - Key is `contactId` (string UUID from Digisac's `data.contactId` on the webhook payload).
@@ -86,7 +86,7 @@ Servidor Node.js + Express que integra o Digisac (WhatsApp) com a Claude API (An
 | Package | Version | Type |
 |---------|---------|------|
 | express | ^5.2.1 | prod |
-| @anthropic-ai/sdk | ^0.90.0 | prod |
+| openai | ^4.98.0 | prod |
 | @ikatec/digisac-api-sdk | ^2.1.1 | prod |
 | pino | ^10.3.1 | prod |
 | pino-http | ^11.0.0 | prod |
@@ -100,7 +100,7 @@ Servidor Node.js + Express que integra o Digisac (WhatsApp) com a Claude API (An
 | @types/express | ^5 | dev |
 | pino-pretty | ^13.x | dev |
 ## Sources
-- Anthropic TypeScript SDK: Context7 `/anthropics/anthropic-sdk-typescript` (HIGH confidence)
+- OpenAI TypeScript SDK: Context7 `/openai/openai-node` (HIGH confidence)
 - `@ikatec/digisac-api-sdk`: Direct npm registry inspection + package source extraction, version 2.1.1 (HIGH confidence)
 - Digisac webhook payload structure: `pkg.go.dev/github.com/pericles-luz/go-base/pkg/digisac` (MEDIUM confidence — Go implementation mirrors JS payload; confirmed against SDK types)
 - express-rate-limit: `npmjs.com/package/express-rate-limit` v8.3.2, MDN Blog (HIGH confidence)

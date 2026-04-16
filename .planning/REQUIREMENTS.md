@@ -27,7 +27,7 @@
 - [ ] **CONV-02**: Sistema usa mutex por contactId para evitar race conditions quando duas mensagens chegam simultâneas
 - [ ] **CONV-03**: Histórico é passado à Claude API a cada mensagem, mantendo contexto da conversa
 - [ ] **CONV-04**: System prompt é configurável via variável de ambiente `SYSTEM_PROMPT`
-- [ ] **CONV-05**: Sistema trata erro 429 (rate limit Anthropic) enviando mensagem de fallback ao lead e registrando para follow-up
+- [ ] **CONV-05**: Sistema trata erro 429 (rate limit OpenAI) enviando mensagem de fallback ao lead e registrando para follow-up
 
 ### Qualificação de Lead
 
@@ -47,7 +47,7 @@
 
 ### Observabilidade
 
-- [ ] **OBS-01**: Logs estruturados com pino incluindo: contactId, tipo de evento, request-id Anthropic, erros com stack trace
+- [ ] **OBS-01**: Logs estruturados com pino incluindo: contactId, tipo de evento, request-id OpenAI, erros com stack trace
 - [x] **OBS-02**: Variáveis de ambiente validadas na inicialização do servidor (falha rápido se faltarem credenciais)
 
 ## v2 Requirements

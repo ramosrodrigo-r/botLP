@@ -79,7 +79,7 @@ None yet.
 
 - Phase 1: OAB-compliant Portuguese wording for AI disclosure and LGPD consent not yet reviewed with the law firm — exact language needs stakeholder sign-off before production
 - Phase 3: Digisac transfer/ticket API call not yet verified against official docs — needs focused review before Phase 3 implementation begins
-- Phase 4: Anthropic account tier unknown — if Tier 1, upgrade to Tier 2 ($40 deposit) required before any production traffic
+- Phase 4: OpenAI account tier / rate limits unknown — verify usage limits before any production traffic
 
 ## Deferred Items
 

@@ -47,7 +47,7 @@ Five components with clean boundaries. No component knows the internals of anoth
 │  │         │  │              │  │   aiService.js)        │      │
 │  │Map<id,  │  │Map<id,       │  │                        │      │
 │  │boolean> │  │Message[]>    │  │• Build messages array  │      │
-│  │         │  │              │  │• Call Claude API       │      │
+│  │         │  │              │  │• Call OpenAI API       │      │
 │  │pause()  │  │append()      │  │• Return reply string   │      │
 │  │resume() │  │get()         │  │• Throw on API errors   │      │
 │  │isPaused │  │trim()        │  └──────────┬─────────────┘      │
@@ -110,7 +110,7 @@ Phase 2 — Processing (async, errors logged not thrown)
 
 8.  AIService.getReply(systemPrompt, history, newUserMessage)
     → internally: build [{role,content},...] array
-    → POST to Anthropic /v1/messages
+    → POST to OpenAI /v1/chat/completions
     → returns replyText string
 
 9.  Inspect replyText for handoff signal
@@ -193,7 +193,7 @@ A `Set` is the right structure — O(1) lookup, clear semantics. Expose `resume(
 
 The core rule: **errors in the processing phase must never crash the server.** Wrap the entire `processMessage` in try/catch and log with structured context (contactId, error code, message).
 
-### Claude API error matrix
+### OpenAI API error matrix
 
 | Error | Code | Handling |
 |-------|------|----------|
@@ -221,11 +221,11 @@ Return HTTP 401 for invalid token. Return HTTP 200 and discard silently for `isF
 
 Always log with structured fields:
 ```javascript
-logger.error('claude_api_error', {
+logger.error('openai_api_error', {
   contactId,
   errorType: err.status,     // 429, 504, etc.
   errorMessage: err.message,
-  requestId: err.headers?.['request-id'], // Anthropic request-id for support
+  requestId: err.headers?.['x-request-id'], // OpenAI request-id for support
 });
 ```
 
@@ -278,8 +278,8 @@ Milestone: Send a hardcoded "hello" reply to a real WhatsApp number.
 
 **Step 3 — Conversation Store + AI Service (Day 2)**
 `src/services/conversationStore.js` + `src/services/aiService.js`
-Wire Claude API with system prompt. Pass empty history first, then real history.
-Milestone: Real AI reply flows from WhatsApp message → Claude → WhatsApp reply.
+Wire OpenAI API with system prompt. Pass empty history first, then real history.
+Milestone: Real AI reply flows from WhatsApp message → OpenAI → WhatsApp reply.
 
 **Step 4 — Message Processor (Day 2)**
 `src/services/messageProcessor.js`
@@ -314,7 +314,7 @@ This architecture is intentionally sized for a single law firm's WhatsApp volume
 
 ## Sources
 
-- Anthropic API error codes and timeout guidance: https://platform.claude.com/docs/en/api/errors
+- OpenAI API error codes and timeout guidance: https://platform.openai.com/docs/guides/error-codes
 - Webhook respond-200-immediately pattern: https://dev.to/dumebii/building-a-robust-webhook-handler-in-nodejs-validation-queuing-and-retry-logic-2fb6
 - Human handoff pausing pattern: https://www.connverz.com/blog/using-chatbots-human-handoff-in-whatsapp-automation
 - In-memory bot state management: https://developer.vonage.com/en/blog/state-machines-for-messaging-bots
