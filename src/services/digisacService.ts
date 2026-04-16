@@ -5,9 +5,13 @@
  * (e.g. `export * from './core'`) which TypeScript NodeNext resolution cannot
  * resolve. Using `import { BaseApiClient }` produces TS2305 even though the
  * runtime values exist. To keep NodeNext strict mode and pass `tsc --noEmit`,
- * we load the SDK via `require()` with explicit type annotations. The runtime
- * behavior is identical to the typed import path.
+ * we load the SDK via `createRequire` (the ESM-legal escape hatch from Node's
+ * built-in `module` package). The runtime behavior is identical to the old
+ * bare require() shim — both resolve to the SDK's CJS bundle — but
+ * `createRequire` is valid ESM and does not throw `ReferenceError: require is
+ * not defined` at startup.
  */
+import { createRequire } from 'module';
 import { env } from '../utils/env.js';
 import { logger } from '../utils/logger.js';
 
@@ -27,13 +31,15 @@ interface IBaseApiClient {
   // opaque — only passed to MessagesApi constructor
 }
 
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const { BaseApiClient } = require('@ikatec/digisac-api-sdk') as {
+const _require = createRequire(import.meta.url);
+
+// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+const { BaseApiClient } = _require('@ikatec/digisac-api-sdk') as {
   BaseApiClient: new (url: string, token: string) => IBaseApiClient;
 };
 
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const { MessagesApi } = require('@ikatec/digisac-api-sdk/apis') as {
+// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+const { MessagesApi } = _require('@ikatec/digisac-api-sdk/apis') as {
   MessagesApi: new (client: IBaseApiClient) => IMessagesApi;
 };
 
