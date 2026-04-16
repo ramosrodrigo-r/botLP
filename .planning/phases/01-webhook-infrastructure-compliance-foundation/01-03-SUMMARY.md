@@ -3,7 +3,7 @@ phase: 01-webhook-infrastructure-compliance-foundation
 plan: "03"
 subsystem: webhook-layer
 tags: [express, webhook, security, rate-limit, helmet, guard-chain, dedup, checkpoint]
-status: awaiting-human-verification
+status: complete
 
 dependency_graph:
   requires:
@@ -52,7 +52,7 @@ metrics:
 | 1 | webhookHandler guard chain + dedup | cc9fd6a | src/handlers/webhookHandler.ts |
 | 2 | routes/index.ts token validation + dispatch | 40e4233 | src/routes/index.ts |
 | 3 | server.ts Express bootstrap | e996ef6 | src/server.ts |
-| 4 | Checkpoint: human verification | PENDING | (running server) |
+| 4 | Checkpoint: human verification | APPROVED | (running server — human verified) |
 
 ## Implementation Details
 
@@ -85,16 +85,20 @@ Middleware order: `helmet()` → `rateLimit({ windowMs: 60_000, max: 60 })` → 
 
 No `/health` endpoint (scoped to v2 MON-01). No `express-async-errors` (Express 5 native). Graceful shutdown on SIGTERM/SIGINT.
 
-## Checkpoint Verification Pending
+## Checkpoint Verification Results
 
-Task 4 is `type="checkpoint:human-verify"`. The user must:
+Human verification completed. User replied: **"approved"**
 
-1. Create `.env` from `.env.example` with real values (WEBHOOK_SECRET min 16 chars)
-2. Run `npm run dev`
-3. Execute the 11 curl tests documented in the plan
-4. Reply with "approved" or list of failures
+| Test | Requirement | Result | Notes |
+|------|-------------|--------|-------|
+| TEST 1 | WBHK-02 invalid token → 401 | PASSED | HTTP 401 returned as expected |
+| TEST 4 | WBHK-01 valid token → 200 in <100ms | PASSED | 1ms response time — well under 100ms threshold |
+| TEST 7 | WBHK-06 dedup: second identical message discarded | PASSED | first processed, second logged as duplicate |
+| TEST 9 | COMP-01/02 messages to real Digisac contact | DEFERRED | Digisac 404 errors expected — test contacts don't exist in real account; SDK integration confirmed working |
 
-**TEST 9** (COMP-01 + COMP-02 via real Digisac) may be deferred if sandbox not available — mark partial in approval.
+**Digisac 404 errors:** Expected during local testing — test contactIds do not exist in the real Digisac account. The SDK called the Digisac API correctly and received a 404 from Digisac (not a local crash). Full TEST 9 verification deferred to Phase 4 with real Digisac traffic.
+
+**Observed response time (TEST 4):** 1ms — confirms HTTP 200 is sent before setImmediate dispatches async work.
 
 ## Deviations from Plan
 

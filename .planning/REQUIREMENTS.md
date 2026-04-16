@@ -7,12 +7,12 @@
 
 ### Webhook & Infraestrutura
 
-- [ ] **WBHK-01**: Servidor retorna HTTP 200 ao Digisac imediatamente (antes de chamar Claude) para evitar reenvios duplicados
-- [ ] **WBHK-02**: Endpoint valida token de autenticação do Digisac com `crypto.timingSafeEqual` e retorna 401 se inválido
-- [ ] **WBHK-03**: Sistema ignora mensagens onde `isFromMe === true` (evita loop infinito)
-- [ ] **WBHK-04**: Sistema ignora eventos que não sejam mensagens de texto (áudios, imagens, documentos)
-- [ ] **WBHK-05**: Rate limiting no endpoint webhook (máximo 60 requisições/minuto por IP)
-- [ ] **WBHK-06**: Deduplicação de webhooks por ID de mensagem (Digisac pode reenviar em caso de lentidão)
+- [x] **WBHK-01**: Servidor retorna HTTP 200 ao Digisac imediatamente (antes de chamar Claude) para evitar reenvios duplicados
+- [x] **WBHK-02**: Endpoint valida token de autenticação do Digisac com `crypto.timingSafeEqual` e retorna 401 se inválido
+- [x] **WBHK-03**: Sistema ignora mensagens onde `isFromMe === true` (evita loop infinito)
+- [x] **WBHK-04**: Sistema ignora eventos que não sejam mensagens de texto (áudios, imagens, documentos)
+- [x] **WBHK-05**: Rate limiting no endpoint webhook (máximo 60 requisições/minuto por IP)
+- [x] **WBHK-06**: Deduplicação de webhooks por ID de mensagem (Digisac pode reenviar em caso de lentidão)
 
 ### Compliance (OAB + LGPD)
 
@@ -47,7 +47,7 @@
 
 ### Observabilidade
 
-- [ ] **OBS-01**: Logs estruturados com pino incluindo: contactId, tipo de evento, request-id OpenAI, erros com stack trace
+- [x] **OBS-01**: Logs estruturados com pino incluindo: contactId, tipo de evento, request-id OpenAI, erros com stack trace
 - [x] **OBS-02**: Variáveis de ambiente validadas na inicialização do servidor (falha rápido se faltarem credenciais)
 
 ## v2 Requirements
@@ -82,12 +82,12 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| WBHK-01 | Phase 1 | Pending |
-| WBHK-02 | Phase 1 | Pending |
-| WBHK-03 | Phase 1 | Pending |
-| WBHK-04 | Phase 1 | Pending |
-| WBHK-05 | Phase 1 | Pending |
-| WBHK-06 | Phase 1 | Pending |
+| WBHK-01 | Phase 1 | Complete |
+| WBHK-02 | Phase 1 | Complete |
+| WBHK-03 | Phase 1 | Complete |
+| WBHK-04 | Phase 1 | Complete |
+| WBHK-05 | Phase 1 | Complete |
+| WBHK-06 | Phase 1 | Complete |
 | COMP-01 | Phase 1 | Complete |
 | COMP-02 | Phase 1 | Complete |
 | COMP-03 | Phase 1 | Complete |
@@ -107,7 +107,7 @@
 | HAND-03 | Phase 3 | Pending |
 | HAND-04 | Phase 3 | Pending |
 | HAND-05 | Phase 3 | Pending |
-| OBS-01 | Phase 1 | Pending |
+| OBS-01 | Phase 1 | Complete |
 | OBS-02 | Phase 1 | Complete |
 
 **Coverage:**

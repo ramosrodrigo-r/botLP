@@ -12,7 +12,7 @@ Build a WhatsApp lead qualification bot for a law firm in four phases: first sec
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Webhook Infrastructure + Compliance Foundation** - Secure webhook receiver with four-layer guard, OAB/LGPD compliance embedded at entry
+- [x] **Phase 1: Webhook Infrastructure + Compliance Foundation** - Secure webhook receiver with four-layer guard, OAB/LGPD compliance embedded at entry (completed 2026-04-16)
 - [ ] **Phase 2: Conversation History + AI Pipeline** - Full end-to-end WhatsApp → Claude → WhatsApp flow with mutex-protected history
 - [ ] **Phase 3: Lead Qualification + Handoff** - Natural intake qualification via prompt engineering and human handoff with persistent pause state
 - [ ] **Phase 4: Production Hardening** - Railway deploy, adversarial testing, and compliance verification before law firm goes live
@@ -29,7 +29,7 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. A new lead's first message triggers an AI disclosure message identifying the bot as IA, followed by LGPD consent prompt before any data collection begins
   4. Every AI response — regardless of content — has the no-legal-advice disclaimer appended in code (visible in test output, not just in system prompt)
   5. Server startup fails fast with a clear error if any required env var (DIGISAC_TOKEN, OPENAI_API_KEY, etc.) is missing
-**Plans:** 3 plans
+**Plans:** 3/3 plans complete
 Plans:
 - [x] 01-01-PLAN.md — Bootstrap TS project, Zod env validation, pino logger, SDK type re-exports, AI stub
 - [x] 01-02-PLAN.md — Digisac SDK service wrapper + compliance service (disclosure, LGPD consent, disclaimer append)
@@ -77,7 +77,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Webhook Infrastructure + Compliance Foundation | 0/3 | Not started | - |
+| 1. Webhook Infrastructure + Compliance Foundation | 3/3 | Complete   | 2026-04-16 |
 | 2. Conversation History + AI Pipeline | 0/TBD | Not started | - |
 | 3. Lead Qualification + Handoff | 0/TBD | Not started | - |
 | 4. Production Hardening | 0/TBD | Not started | - |
