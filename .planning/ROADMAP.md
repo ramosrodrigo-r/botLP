@@ -77,7 +77,7 @@ Plans:
 **Plans:** 1/3 plans executed
 Plans:
 - [x] 04-01-PLAN.md — Env vars SANDBOX_MODE/SANDBOX_NUMBERS + GET /health antes do rate-limit + bind 0.0.0.0 + Guard 0 (sandbox) no webhookHandler
-- [ ] 04-02-PLAN.md — railway.json + .env.example atualizado + checkpoint de configuração do projeto no Railway (volume /data, env vars, deploy inicial)
+- [x] 04-02-PLAN.md — railway.json + .env.example atualizado + checkpoint de configuração do projeto no Railway (volume /data, env vars, deploy inicial)
 - [ ] 04-03-PLAN.md — Docs (GO-LIVE-CHECKLIST, ADVERSARIAL-TESTS, COMPLIANCE-TEXTS) + 3 testes adversariais + validação do filtro isFromMe + checkpoint final de go-live
 
 ## Progress
@@ -90,4 +90,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 | 1. Webhook Infrastructure + Compliance Foundation | 3/3 | Complete   | 2026-04-16 |
 | 2. Conversation History + AI Pipeline | 2/2 | Complete   | 2026-04-17 |
 | 3. Lead Qualification + Handoff | 2/2 | Complete   | 2026-04-17 |
-| 4. Production Hardening | 1/3 | In Progress|  |
+| 4. Production Hardening | 2/3 | In Progress|  |
