@@ -1,30 +1,8 @@
 import { env } from '../utils/env.js';
 import { sendMessage } from './digisacService.js';
 import { logger } from '../utils/logger.js';
-
-/**
- * Per-contact compliance flags.
- *
- * State is in-memory (Map) — Phase 1 does not persist. On server restart, a
- * returning lead sees the disclosure + consent prompt again. This is acceptable
- * UX for v1 per D-07 and is documented here so the behavior is not confused
- * with a bug. Phase 3 introduces restart-safe state for handoff only.
- */
-interface ComplianceState {
-  disclosureSent: boolean;
-  consentGiven: boolean;
-}
-
-const complianceStore = new Map<string, ComplianceState>();
-
-function getState(contactId: string): ComplianceState {
-  let state = complianceStore.get(contactId);
-  if (!state) {
-    state = { disclosureSent: false, consentGiven: false };
-    complianceStore.set(contactId, state);
-  }
-  return state;
-}
+import { getOrCreateSession } from './sessionService.js';
+import { __resetSessionStoreForTesting } from './sessionService.js';
 
 /**
  * Runs the OAB disclosure + LGPD consent flow for a contact.
@@ -42,23 +20,27 @@ function getState(contactId: string): ComplianceState {
  *
  * COMP-01: disclosure sent on first interaction per contact.
  * COMP-02: LGPD consent prompt sent before any data collection; implicit accept.
+ *
+ * State now lives in sessionService (SessionState.disclosureSent, SessionState.consentGiven).
+ * No internal Map — this module is stateless. Phase 2 TTL reset (D-04) in aiService.ts
+ * atomically resets both compliance flags via resetSession().
  */
 export async function runComplianceFlow(contactId: string): Promise<boolean> {
   const log = logger.child({ contactId, service: 'compliance' });
-  const state = getState(contactId);
+  const session = getOrCreateSession(contactId);
 
-  if (!state.disclosureSent) {
+  if (!session.disclosureSent) {
     log.info('new contact — sending AI disclosure and LGPD consent prompt');
     await sendMessage(contactId, env.DISCLOSURE_MESSAGE);
     await sendMessage(contactId, env.LGPD_CONSENT_MESSAGE);
-    state.disclosureSent = true;
+    session.disclosureSent = true;
     // consentGiven stays false — the user's NEXT message is the implicit consent (D-05/D-06).
     return false;
   }
 
-  if (!state.consentGiven) {
+  if (!session.consentGiven) {
     // D-05/D-06: any subsequent message = implicit consent. Proceed to AI.
-    state.consentGiven = true;
+    session.consentGiven = true;
     log.info('implicit LGPD consent recorded (any reply after consent prompt)');
     return true;
   }
@@ -81,9 +63,9 @@ export function appendDisclaimer(text: string): string {
 }
 
 /**
- * Test-only helper: clears the compliance store. Used in plan 03 verification.
- * Exported to avoid leaking the internal Map. Not intended for production use.
+ * Test-only helper. Compliance state now lives in sessionService.
+ * This alias is kept so existing test code that called the old name continues to work.
  */
 export function __resetComplianceStoreForTesting(): void {
-  complianceStore.clear();
+  __resetSessionStoreForTesting();
 }
