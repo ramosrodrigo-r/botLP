@@ -30,6 +30,23 @@
 
 Se QUALQUER gate 1..8 estiver `[ ]`, não executar os gates 9 e 10. O sandbox deve permanecer ativo.
 
+## Gate 5 — Investigação
+
+**Status:** Pendente de tráfego real no Railway (Railway ainda não configurado em 2026-04-17).
+
+**Implementação verificada no código:**
+- `src/handlers/webhookHandler.ts` Guard 2 (linha 114): `if (msg.isFromMe) { logger.debug({ messageId: msg.id }, 'discarded: isFromMe'); return; }`
+- O log `discarded: isFromMe` já está implementado com `logger.debug` — aparecerá no Railway Log Explorer quando o Digisac enviar webhook para mensagem outbound do bot
+
+**Procedimento para marcar gate 5 como [x]:**
+1. Com Railway em estado Healthy e SANDBOX_MODE=true, enviar uma mensagem normal do WhatsApp pessoal (contactId em SANDBOX_NUMBERS) para o bot
+2. Aguardar a resposta do bot chegar no WhatsApp
+3. Verificar no Railway Log Explorer: após o envio da resposta pelo bot, deve aparecer log `discarded: isFromMe` (se o Digisac enviar webhook para mensagens outbound)
+4. Se o log aparecer: filtro confirmado — marcar `[ ]` → `[x]` na linha do gate 5 acima e adicionar evidência (timestamp + messageId do log)
+5. Se o log NÃO aparecer: o Digisac pode não enviar webhook para mensagens outbound (comportamento comum em alguns provedores). Neste caso: Guard 2 continua protegendo contra replay de inbound próprios (mensagens enviadas pelo próprio contato com `isFromMe=true`), mas a validação do loop-prevention contra outbound do bot depende do comportamento do Digisac. Documentar comportamento observado.
+
+**Observação técnica:** Guard 2 verifica `msg.isFromMe` em cada webhook recebido — protege contra mensagens onde o campo `isFromMe` indica que a mensagem foi enviada pelo número conectado ao Digisac. Seja via loop de outbound ou via outras origens, o guard está ativo e logado.
+
 ## Pós-go-live
 
 Após gate 10, monitorar nas primeiras 24h:
