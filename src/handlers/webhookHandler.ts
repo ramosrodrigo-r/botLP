@@ -1,4 +1,4 @@
-import type { WebhookPayload } from '@ikatec/digisac-api-sdk/incommingWebhooks';
+import type { WebhookPayload } from '../types/digisac.js';
 import { logger } from '../utils/logger.js';
 import { runComplianceFlow, appendDisclaimer } from '../services/complianceService.js';
 import { getAIResponse, FallbackAlreadySent } from '../services/aiService.js';
@@ -76,7 +76,14 @@ export async function handleWebhookAsync(body: unknown): Promise<void> {
   recordSeen(msg.id);
 
   // All guards passed — process.
-  const contactId = msg.contactId;
+  // CR-01: Message SDK type has no contactId field — Digisac sends it as an undeclared extra
+  // field on the flat payload. Cast through unknown to acknowledge the gap between SDK types
+  // and the actual API response shape.
+  const contactId = (msg as Record<string, unknown>)['contactId'] as string | undefined;
+  if (!contactId) {
+    logger.error({ messageId: msg.id }, 'contactId missing from payload — cannot route session');
+    return;
+  }
   const log = logger.child({ contactId, messageId: msg.id, event: payload.event });
   log.info('processing message');
 
