@@ -13,6 +13,7 @@ import rateLimit from 'express-rate-limit';
 import { env } from './utils/env.js';
 import { logger, httpLogger } from './utils/logger.js';
 import router from './routes/index.js';
+import { loadFromDisk } from './services/handoffService.js';
 
 const app = express();
 
@@ -43,6 +44,14 @@ app.use(express.json());
 app.use(httpLogger);
 
 app.use('/', router);
+
+// Phase 3 (HAND-04 / RESEARCH Pitfall 6): the paused state must be loaded from
+// disk BEFORE the server accepts connections. Otherwise the first webhook
+// after restart could slip past Guard 6 (isPaused) because the in-memory
+// Map has not yet been populated from data/paused.json.
+//
+// Top-level await works because package.json has "type": "module".
+await loadFromDisk();
 
 const server = app.listen(env.PORT, () => {
   logger.info({ port: env.PORT, env: env.NODE_ENV }, 'server started');
