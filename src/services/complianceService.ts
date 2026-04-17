@@ -52,14 +52,17 @@ export async function runComplianceFlow(contactId: string): Promise<boolean> {
 /**
  * Appends the legal disclaimer to AI-generated text.
  *
- * D-04 exact format: <text>\n\n---\n⚠️ ${LEGAL_DISCLAIMER}
+ * Format: <text>\n\n---\n${LEGAL_DISCLAIMER}
+ *
+ * LEGAL_DISCLAIMER env var controls the full footer text — include any desired
+ * prefix (e.g. "⚠️ ...") in the env var value rather than hardcoding it here.
  *
  * COMP-03 requires this append to be in CODE, never relying on the system
  * prompt. Every code path that sends AI output to a lead MUST pipe it through
  * this function — see RESEARCH.md Pitfall 5.
  */
 export function appendDisclaimer(text: string): string {
-  return `${text}\n\n---\n⚠️ ${env.LEGAL_DISCLAIMER}`;
+  return `${text}\n\n---\n${env.LEGAL_DISCLAIMER}`;
 }
 
 /**
