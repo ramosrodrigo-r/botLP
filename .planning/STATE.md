@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: verifying
-stopped_at: Phase 4 context gathered
-last_updated: "2026-04-17T22:45:21.981Z"
+status: executing
+stopped_at: Completed 04-production-hardening-04-01-PLAN.md
+last_updated: "2026-04-17T23:24:11.390Z"
 last_activity: 2026-04-17
 progress:
   total_phases: 4
   completed_phases: 3
-  total_plans: 7
-  completed_plans: 7
-  percent: 100
+  total_plans: 10
+  completed_plans: 8
+  percent: 80
 ---
 
 # Project State
@@ -21,13 +21,13 @@ progress:
 See: .planning/PROJECT.md (updated 2026-04-16)
 
 **Core value:** O lead recebe resposta imediata, é qualificado pela IA (interesse, urgência, tipo de caso) e transferido para um advogado no momento certo — maximizando conversão sem sobrecarregar a equipe.
-**Current focus:** Phase 03 — lead-qualification-handoff
+**Current focus:** Phase 04 — production-hardening
 
 ## Current Position
 
-Phase: 4
-Plan: Not started
-Status: Phase complete — ready for verification
+Phase: 04 (production-hardening) — EXECUTING
+Plan: 2 of 3
+Status: Ready to execute
 Last activity: 2026-04-17
 
 Progress: [░░░░░░░░░░] 0%
@@ -62,6 +62,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 03 P01 | 116s | 2 tasks | 4 files |
 | Phase 03 P02 | 0 | 2 tasks | 2 files |
 | Phase 03 P02 | 0 | 3 tasks | 2 files |
+| Phase 04-production-hardening P01 | 8m | 3 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -93,6 +94,9 @@ Recent decisions affecting current work:
 - [Phase 03]: replaceAll used for [HANDOFF] marker strip (not replace) — removes all occurrences (Pitfall 5)
 - [Phase 03]: await loadFromDisk() before app.listen() via top-level await (type:module) — HAND-04
 - [Phase 03]: Human verified three handoff scenarios end-to-end (urgency, AI marker, paused contact survival on restart) — all HAND-01 through HAND-05 requirements confirmed
+- [Phase 04-production-hardening]: GET /health registered before rateLimit middleware — Railway poller must not hit 429
+- [Phase 04-production-hardening]: app.listen binds to 0.0.0.0 explicitly — prevents Application failed to respond in Railway container
+- [Phase 04-production-hardening]: z.coerce.boolean() for SANDBOX_MODE — Zod v4 coerce converts string env var to boolean natively
 
 ### Pending Todos
 
@@ -112,6 +116,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-17T22:45:21.976Z
-Stopped at: Phase 4 context gathered
-Resume file: .planning/phases/04-production-hardening/04-CONTEXT.md
+Last session: 2026-04-17T23:24:11.386Z
+Stopped at: Completed 04-production-hardening-04-01-PLAN.md
+Resume file: None

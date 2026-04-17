@@ -74,9 +74,9 @@ Plans:
   2. Structured pino logs for a full lead interaction — webhook receipt, OpenAI call, Digisac send, handoff trigger — are readable and filterable in Railway log viewer
   3. Three adversarial prompts designed to elicit legal opinions receive responses that contain the disclaimer and redirect to human contact without giving opinions
   4. The Digisac origin field filter behavior (isFromMe + agent-origin messages) is confirmed against real traffic and logged behavior matches expected filtering
-**Plans:** 3 plans
+**Plans:** 1/3 plans executed
 Plans:
-- [ ] 04-01-PLAN.md — Env vars SANDBOX_MODE/SANDBOX_NUMBERS + GET /health antes do rate-limit + bind 0.0.0.0 + Guard 0 (sandbox) no webhookHandler
+- [x] 04-01-PLAN.md — Env vars SANDBOX_MODE/SANDBOX_NUMBERS + GET /health antes do rate-limit + bind 0.0.0.0 + Guard 0 (sandbox) no webhookHandler
 - [ ] 04-02-PLAN.md — railway.json + .env.example atualizado + checkpoint de configuração do projeto no Railway (volume /data, env vars, deploy inicial)
 - [ ] 04-03-PLAN.md — Docs (GO-LIVE-CHECKLIST, ADVERSARIAL-TESTS, COMPLIANCE-TEXTS) + 3 testes adversariais + validação do filtro isFromMe + checkpoint final de go-live
 
@@ -90,4 +90,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 | 1. Webhook Infrastructure + Compliance Foundation | 3/3 | Complete   | 2026-04-16 |
 | 2. Conversation History + AI Pipeline | 2/2 | Complete   | 2026-04-17 |
 | 3. Lead Qualification + Handoff | 2/2 | Complete   | 2026-04-17 |
-| 4. Production Hardening | 0/3 | Not started | - |
+| 4. Production Hardening | 1/3 | In Progress|  |
