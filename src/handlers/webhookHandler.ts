@@ -3,6 +3,7 @@ import { logger } from '../utils/logger.js';
 import { runComplianceFlow, appendDisclaimer } from '../services/complianceService.js';
 import { getAIResponse, FallbackAlreadySent } from '../services/aiService.js';
 import { sendMessage } from '../services/digisacService.js';
+import { getOrCreateSession } from '../services/sessionService.js';
 
 /**
  * Deduplication: Map<messageId, timestamp_ms> with 60s TTL, lazy eviction.
@@ -86,6 +87,11 @@ export async function handleWebhookAsync(body: unknown): Promise<void> {
   }
   const log = logger.child({ contactId, messageId: msg.id, event: payload.event });
   log.info('processing message');
+
+  // WR-01: touch TTL clock on every inbound message, not only after AI success.
+  // Prevents TTL expiry mid-compliance-onboarding for contacts who take >24h to reply.
+  const session = getOrCreateSession(contactId);
+  session.lastAccessAt = Date.now();
 
   // COMP-01 + COMP-02: disclosure + LGPD consent flow.
   // If runComplianceFlow returns false, onboarding messages were just sent
