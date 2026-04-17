@@ -16,6 +16,12 @@ const EnvSchema = z.object({
   // OpenAI (validated now even though AI pipeline is Phase 2 — fail-fast per OBS-02)
   OPENAI_API_KEY: z.string().startsWith('sk-', 'OPENAI_API_KEY must start with sk-'),
   OPENAI_MODEL: z.string().default('gpt-4o'),
+  OPENAI_FALLBACK_MESSAGE: z
+    .string()
+    .default(
+      'No momento estou com dificuldades técnicas para responder. ' +
+      'Um de nossos atendentes entrará em contato em breve.',
+    ),
 
   // Compliance texts (D-02, D-03 — placeholder values in .env.example, stakeholder review before production)
   DISCLOSURE_MESSAGE: z.string().min(1),
