@@ -29,6 +29,21 @@ const EnvSchema = z.object({
   LEGAL_DISCLAIMER: z.string().min(1),
   SYSTEM_PROMPT: z.string().min(1),
 
+  // Handoff (Phase 3 — D-05, D-08, D-11)
+  URGENCY_KEYWORDS: z
+    .string()
+    .default('preso,liminar,audiência amanhã,habeas corpus,flagrante'),
+
+  HANDOFF_MESSAGE: z
+    .string()
+    .default(
+      'Um de nossos advogados irá dar continuidade ao seu atendimento em breve. Obrigado pela paciência.',
+    ),
+
+  PAUSED_STATE_FILE: z
+    .string()
+    .default('./data/paused.json'),
+
   // Server
   PORT: z.coerce.number().default(3000),
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
