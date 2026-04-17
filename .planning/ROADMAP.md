@@ -45,7 +45,10 @@ Plans:
   3. A simulated OpenAI 429 error sends a graceful fallback message to the lead and logs the event for follow-up — without crashing the server
   4. The system prompt is sourced from the SYSTEM_PROMPT env var; changing it without code changes alters bot behavior on the next message
   5. After a full exchange, the bot has gathered lead name, case area, urgency level, and hiring intent through natural conversation (not form-style prompting)
-**Plans**: TBD
+**Plans:** 2 plans
+Plans:
+- [ ] 02-01-PLAN.md — Create sessionService (unified SessionState) + refactor complianceService + add OPENAI_FALLBACK_MESSAGE env var
+- [ ] 02-02-PLAN.md — Install async-mutex, rewrite aiService with mutex/TTL/429 handling, wire webhookHandler + SYSTEM_PROMPT placeholder for QUAL-01..05
 **UI hint**: no
 
 ### Phase 3: Lead Qualification + Handoff
