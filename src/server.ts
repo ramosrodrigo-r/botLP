@@ -32,6 +32,16 @@ const app = express();
  * express-async-errors package needed (CLAUDE.md constraint).
  */
 app.use(helmet());
+
+// GET /health (Phase 4 — D-02).
+// Registrado ANTES do rate-limit porque o Railway health check poller chama este
+// endpoint repetidamente; se estivesse após rateLimit() poderia receber 429 e
+// o Railway marcaria o deploy como falho (RESEARCH.md Pitfall 2).
+// Resposta mínima: { status: 'ok', uptime: <segundos desde o start do processo> }.
+app.get('/health', (_req, res) => {
+  res.status(200).json({ status: 'ok', uptime: process.uptime() });
+});
+
 app.use(
   rateLimit({
     windowMs: 60_000, // 1 minute window
@@ -53,7 +63,10 @@ app.use('/', router);
 // Top-level await works because package.json has "type": "module".
 await loadFromDisk();
 
-const server = app.listen(env.PORT, () => {
+// Phase 4 — Railway exige bind em 0.0.0.0 para o health check poller alcançar o servidor
+// a partir da rede do container. Sem o host explícito, o bind depende do SO e pode ficar
+// restrito a 127.0.0.1, causando "Application failed to respond" (RESEARCH.md Pitfall 1).
+const server = app.listen(env.PORT, '0.0.0.0', () => {
   logger.info({ port: env.PORT, env: env.NODE_ENV }, 'server started');
 });
 
