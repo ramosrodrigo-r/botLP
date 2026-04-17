@@ -35,7 +35,7 @@ The urgency guard bypasses the LGPD compliance flow entirely (D-06): an emergenc
 
 **Estado de Pausa Persistido (HAND-04, HAND-05)**
 
-- **D-07:** Estrutura do arquivo: JSON com objeto `{ [contactId]: { pausedAt: number, reason: "handoff" | "urgency" } }`.
+- **D-07:** Estrutura do arquivo: JSON com objeto `{ [contactId]: { pausedAt: number, reason: "marker" | "urgency" } }`.
 - **D-08:** Path do arquivo: `./data/paused.json`. Path configurável via env var `PAUSED_STATE_FILE` com default `./data/paused.json`.
 - **D-09:** Carregar o arquivo na inicialização do servidor. Gravar atomicamente após cada mudança (write + rename). Sem debounce.
 - **D-10:** Em memória: `Map<string, { pausedAt: number; reason: string }>` como cache. Arquivo é a fonte da verdade para restarts.
@@ -588,17 +588,17 @@ data/
 
 ---
 
-## Open Questions
+## Open Questions (RESOLVED)
 
-1. **D-03 History update on AI-triggered handoff**
+1. **D-03 History update on AI-triggered handoff** — RESOLVED
    - What we know: `getAIResponse()` commits history internally before returning. The handoff marker is detected in `webhookHandler.ts` AFTER the commit has already happened inside `aiService.ts`.
    - What's unclear: Whether the product owner cares that the final assistant turn (the one with [HANDOFF]) is stored in history for a contact that will never be resumed.
-   - Recommendation: Accept Option A (history contains the final turn). The session is never used again. Documented in Pitfall 2 above.
+   - **Resolution:** Accept Option A (history contains the final turn). The session is never used again. Documented in Pitfall 2 above. Plan 03-02 Task 1 explicitly comments this trade-off (D-03 with Pitfall 2 Option A note).
 
-2. **Urgency guard position relative to contactId extraction**
+2. **Urgency guard position relative to contactId extraction** — RESOLVED
    - What we know: `contactId` is extracted at line 91 of `webhookHandler.ts`, immediately before the urgency guard would be inserted.
    - What's unclear: Whether `pause(contactId, 'urgency')` should be called even if `contactId` is undefined (which causes a `logger.error` and early return at line 95).
-   - Recommendation: Urgency guard runs AFTER the contactId null-check (line 95). A message with no contactId cannot be paused meaningfully and the existing error-log + return handles it.
+   - **Resolution:** Urgency guard runs AFTER the contactId null-check (line 95). A message with no contactId cannot be paused meaningfully and the existing error-log + return handles it. Plan 03-02 Task 1 STEP 3 enforces this ordering (Guard 6/7 inserted after the null-check, not before).
 
 ---
 
@@ -662,3 +662,4 @@ data/
 
 **Research date:** 2026-04-17
 **Valid until:** 2026-05-17 (stable Node.js built-in APIs; no ecosystem drift risk)
+**Revision 1 (2026-04-17):** Open Questions section marked RESOLVED — both questions have resolutions documented inline and enforced in plans 03-01/03-02.

@@ -29,7 +29,7 @@ Requisitos cobertos: HAND-01, HAND-02, HAND-03, HAND-04, HAND-05.
 
 ### Estado de Pausa Persistido (HAND-04, HAND-05)
 
-- **D-07:** Estrutura do arquivo: JSON com objeto `{ [contactId]: { pausedAt: number, reason: "handoff" | "urgency" } }`. Inclui metadados mínimos (quando e por que pausou) — útil para debug e logs sem complexidade extra.
+- **D-07:** Estrutura do arquivo: JSON com objeto `{ [contactId]: { pausedAt: number, reason: "marker" | "urgency" } }`. Inclui metadados mínimos (quando e por que pausou) — útil para debug e logs sem complexidade extra. **Nota terminológica:** "marker" nomeia o mecanismo (o marcador `[HANDOFF]` emitido pela IA) e "urgency" nomeia o gatilho pré-IA por palavra-chave. Revisto em 2026-04-17 para alinhamento literal com o `PauseRecord` definido em `handoffService.ts` (anteriormente "handoff" | "urgency"; "marker" é mais preciso e evita ambiguidade com a categoria geral "handoff").
 - **D-08:** Path do arquivo: **`./data/paused.json`** — diretório `data/` na raiz do projeto, listado no `.gitignore`. Path configurável via env var **`PAUSED_STATE_FILE`** com default `./data/paused.json`. Consistente com deploy no Railway (volume persistente ou mesmo ephemeral storage).
 - **D-09:** Carregar o arquivo na inicialização do servidor (`server.ts` ou `handoffService.ts`). Gravar atomicamente após cada mudança (write + rename, ou write direto com try/catch). Sem debounce — handoffs são raros.
 - **D-10:** Em memória: `Map<string, { pausedAt: number; reason: string }>` como cache. Arquivo é a fonte da verdade para restarts. Ao pausar: atualizar Map + gravar arquivo. Ao verificar: checar o Map (leitura em memória, sem I/O por mensagem).
@@ -117,3 +117,4 @@ Requisitos cobertos: HAND-01, HAND-02, HAND-03, HAND-04, HAND-05.
 
 *Phase: 03-lead-qualification-handoff*
 *Context gathered: 2026-04-17*
+*Revision 1 (2026-04-17): D-07 reason literal changed from "handoff" | "urgency" to "marker" | "urgency" for alignment with PauseRecord interface in plans 03-01/03-02. See D-07 note for rationale.*
