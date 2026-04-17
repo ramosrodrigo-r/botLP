@@ -44,6 +44,14 @@ const EnvSchema = z.object({
     .string()
     .default('./data/paused.json'),
 
+  // Sandbox (Phase 4 — D-11)
+  // SANDBOX_MODE=true faz o bot responder APENAS aos contactIds listados em SANDBOX_NUMBERS;
+  // mensagens de demais contactIds são descartadas silenciosamente no Guard 0.
+  // Usado para testar o fluxo completo no Railway com tráfego Digisac real antes do go-live (D-12).
+  // Desabilitar antes de apontar Digisac para produção (gate D-13).
+  SANDBOX_MODE: z.coerce.boolean().default(false),
+  SANDBOX_NUMBERS: z.string().default(''),
+
   // Server
   PORT: z.coerce.number().default(3000),
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
