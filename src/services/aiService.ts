@@ -92,7 +92,16 @@ export async function getAIResponse(
           ...trimmed,
         ],
       });
-      assistantText = response.choices[0]?.message?.content ?? '';
+      const rawContent = response.choices[0]?.message?.content;
+      if (!rawContent) {
+        log.warn(
+          { finishReason: response.choices[0]?.finish_reason },
+          'OpenAI returned empty content — sending fallback to lead',
+        );
+        await sendMessage(contactId, env.OPENAI_FALLBACK_MESSAGE);
+        throw new FallbackAlreadySent();
+      }
+      assistantText = rawContent;
     } catch (err) {
       if (err instanceof OpenAI.RateLimitError) {
         log.warn(
