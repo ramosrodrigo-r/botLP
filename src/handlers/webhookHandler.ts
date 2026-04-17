@@ -40,6 +40,19 @@ const urgencyKeywords: string[] = env.URGENCY_KEYWORDS
   .filter(Boolean);
 
 /**
+ * SANDBOX_NUMBERS (Phase 4 — D-11): Set<string> para lookup O(1) no Guard 0.
+ * Parseado uma vez no load do módulo (mesmo idioma de urgencyKeywords, mas sem lowercase
+ * porque contactId é UUID e é comparado case-sensitive). Vazio quando SANDBOX_MODE=false.
+ * Usado pelo Guard 0 para descartar mensagens de contactIds fora da lista de teste.
+ */
+const sandboxNumbers: Set<string> = new Set(
+  env.SANDBOX_NUMBERS
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean),
+);
+
+/**
  * D-04/D-06: return true if the inbound text contains any urgency keyword
  * as a substring (case-insensitive). Consumed by Guard 7.
  */
@@ -68,6 +81,24 @@ function isUrgencyKeyword(text: string): boolean {
  */
 export async function handleWebhookAsync(body: unknown): Promise<void> {
   const payload = body as WebhookPayload;
+
+  // Guard 0: sandbox mode (Phase 4 — D-11).
+  // Primeiro guard da chain — rejeita tudo que não é contactId de teste antes de qualquer lógica
+  // (comparação de string é o filtro mais barato disponível).
+  // O contactId é extraído aqui via o mesmo cast do Guard 6 (CR-01: SDK não declara o campo).
+  // Se contactId for undefined (payload de ping/teste sem o campo), descartar silenciosamente —
+  // não é erro (RESEARCH.md Pitfall 5).
+  if (env.SANDBOX_MODE) {
+    const sandboxContactId =
+      (payload.data as Record<string, unknown>)['contactId'] as string | undefined;
+    if (!sandboxContactId || !sandboxNumbers.has(sandboxContactId)) {
+      logger.debug(
+        { event: 'sandbox_blocked', contactId: sandboxContactId },
+        'discarded: sandbox mode active',
+      );
+      return;
+    }
+  }
 
   // Guard 1: non-message events
   if (payload.event !== 'message.created') {
