@@ -23,10 +23,10 @@
 
 ### Conversa & IA
 
-- [ ] **CONV-01**: Sistema mantém histórico de conversa por contactId (máximo 20 turnos, com TTL de inatividade)
+- [x] **CONV-01**: Sistema mantém histórico de conversa por contactId (máximo 20 turnos, com TTL de inatividade)
 - [ ] **CONV-02**: Sistema usa mutex por contactId para evitar race conditions quando duas mensagens chegam simultâneas
 - [ ] **CONV-03**: Histórico é passado à Claude API a cada mensagem, mantendo contexto da conversa
-- [ ] **CONV-04**: System prompt é configurável via variável de ambiente `SYSTEM_PROMPT`
+- [x] **CONV-04**: System prompt é configurável via variável de ambiente `SYSTEM_PROMPT`
 - [ ] **CONV-05**: Sistema trata erro 429 (rate limit OpenAI) enviando mensagem de fallback ao lead e registrando para follow-up
 
 ### Qualificação de Lead
@@ -92,10 +92,10 @@
 | COMP-02 | Phase 1 | Complete |
 | COMP-03 | Phase 1 | Complete |
 | COMP-04 | Phase 1 | Complete |
-| CONV-01 | Phase 2 | Pending |
+| CONV-01 | Phase 2 | Complete |
 | CONV-02 | Phase 2 | Pending |
 | CONV-03 | Phase 2 | Pending |
-| CONV-04 | Phase 2 | Pending |
+| CONV-04 | Phase 2 | Complete |
 | CONV-05 | Phase 2 | Pending |
 | QUAL-01 | Phase 2 | Pending |
 | QUAL-02 | Phase 2 | Pending |

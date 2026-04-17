@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: verifying
-stopped_at: Phase 2 context gathered
-last_updated: "2026-04-16T23:50:33.386Z"
-last_activity: 2026-04-16
+status: executing
+stopped_at: Completed 02-01-PLAN.md
+last_updated: "2026-04-17T01:23:42.272Z"
+last_activity: 2026-04-17
 progress:
   total_phases: 4
   completed_phases: 1
-  total_plans: 3
-  completed_plans: 3
-  percent: 100
+  total_plans: 5
+  completed_plans: 4
+  percent: 80
 ---
 
 # Project State
@@ -21,14 +21,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-04-16)
 
 **Core value:** O lead recebe resposta imediata, é qualificado pela IA (interesse, urgência, tipo de caso) e transferido para um advogado no momento certo — maximizando conversão sem sobrecarregar a equipe.
-**Current focus:** Phase 01 — webhook-infrastructure-compliance-foundation
+**Current focus:** Phase 02 — conversation-history-ai-pipeline
 
 ## Current Position
 
-Phase: 2
-Plan: Not started
-Status: Phase complete — ready for verification
-Last activity: 2026-04-16
+Phase: 02 (conversation-history-ai-pipeline) — EXECUTING
+Plan: 2 of 2
+Status: Ready to execute
+Last activity: 2026-04-17
 
 Progress: [░░░░░░░░░░] 0%
 
@@ -55,6 +55,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 01-webhook-infrastructure-compliance-foundation P01 | 8 | 3 tasks | 9 files |
 | Phase 01-webhook-infrastructure-compliance-foundation P02 | 8 | 2 tasks | 2 files |
 | Phase 01-webhook-infrastructure-compliance-foundation P03 | 35 | 4 tasks | 3 files |
+| Phase 02 P01 | 2m | 3 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -74,6 +75,8 @@ Recent decisions affecting current work:
 - [Phase 01-webhook-infrastructure-compliance-foundation]: HTTP 200 sent before setImmediate dispatch — Digisac treats non-200 as retry signal
 - [Phase 01-webhook-infrastructure-compliance-foundation]: msg.type === 'chat' not 'text' — SDK MessageType union verified from @ikatec/digisac-api-sdk
 - [Phase 01-webhook-infrastructure-compliance-foundation]: Token via query param per D-01 — Digisac configured with full URL including ?token=
+- [Phase 02]: SessionState is the single Map entry holding history + compliance flags + lastAccessAt; complianceService.ts is now stateless
+- [Phase 02]: OPENAI_FALLBACK_MESSAGE is optional-with-default following OPENAI_MODEL precedent (Portuguese default, D-11)
 
 ### Pending Todos
 
@@ -93,6 +96,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-16T23:50:33.378Z
-Stopped at: Phase 2 context gathered
-Resume file: .planning/phases/02-conversation-history-ai-pipeline/02-CONTEXT.md
+Last session: 2026-04-17T01:23:42.266Z
+Stopped at: Completed 02-01-PLAN.md
+Resume file: None
