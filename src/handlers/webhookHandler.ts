@@ -1,6 +1,8 @@
 import type { WebhookPayload } from '@ikatec/digisac-api-sdk/incommingWebhooks';
 import { logger } from '../utils/logger.js';
-import { runComplianceFlow } from '../services/complianceService.js';
+import { runComplianceFlow, appendDisclaimer } from '../services/complianceService.js';
+import { getAIResponse, FallbackAlreadySent } from '../services/aiService.js';
+import { sendMessage } from '../services/digisacService.js';
 
 /**
  * Deduplication: Map<messageId, timestamp_ms> with 60s TTL, lazy eviction.
@@ -87,8 +89,19 @@ export async function handleWebhookAsync(body: unknown): Promise<void> {
     return;
   }
 
-  // Phase 2: wire AI pipeline here.
-  //   const aiReply = await getAIResponse(contactId, msg.text);
-  //   await sendMessage(contactId, appendDisclaimer(aiReply));
-  log.debug('compliance satisfied; Phase 2 AI pipeline would run here');
+  // CONV-03/CONV-04/CONV-05: full AI pipeline.
+  // aiService handles mutex (CONV-02), TTL reset (D-03/D-04), and 429 fallback (CONV-05).
+  // On 429 the fallback is sent by aiService directly and FallbackAlreadySent is thrown to
+  // prevent double-delivery of the fallback text here.
+  try {
+    const aiReply = await getAIResponse(contactId, msg.text);
+    await sendMessage(contactId, appendDisclaimer(aiReply));
+    log.info({ replyLength: aiReply.length }, 'AI reply sent to lead');
+  } catch (err) {
+    if (err instanceof FallbackAlreadySent) {
+      log.info('429 fallback already delivered by aiService; skipping second send');
+      return;
+    }
+    throw err;
+  }
 }
