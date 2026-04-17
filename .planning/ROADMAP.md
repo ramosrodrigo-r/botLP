@@ -60,7 +60,10 @@ Plans:
   2. After handoff is triggered, subsequent messages from the same contactId produce no AI reply and no Claude API call
   3. Restarting the server does not clear the paused-contacts state — a contact paused before restart remains paused after restart
   4. An urgency keyword message (e.g., "preso", "liminar", "audiência amanhã") triggers immediate handoff, bypassing the normal qualification flow
-**Plans**: TBD
+**Plans:** 1/2 plans executed
+Plans:
+- [x] 03-01-PLAN.md — Create handoffService (Map + atomic disk persistence) + URGENCY_KEYWORDS/HANDOFF_MESSAGE/PAUSED_STATE_FILE env vars + .gitignore data/
+- [ ] 03-02-PLAN.md — Wire Guard 6 (isPaused), Guard 7 (urgency), and [HANDOFF] marker handling into webhookHandler.ts + await loadFromDisk() in server.ts (human-verify checkpoint)
 
 ### Phase 4: Production Hardening
 **Goal**: The bot is deployed on Railway with structured logs readable in the Railway viewer, all compliance requirements verified under real (or simulated) lead interactions, adversarial prompt test cases documented and passing, and the firm can confidently switch on WhatsApp traffic
@@ -82,5 +85,5 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 |-------|----------------|--------|-----------|
 | 1. Webhook Infrastructure + Compliance Foundation | 3/3 | Complete   | 2026-04-16 |
 | 2. Conversation History + AI Pipeline | 2/2 | Complete   | 2026-04-17 |
-| 3. Lead Qualification + Handoff | 0/TBD | Not started | - |
+| 3. Lead Qualification + Handoff | 1/2 | In Progress|  |
 | 4. Production Hardening | 0/TBD | Not started | - |
