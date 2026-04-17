@@ -20,3 +20,6 @@ npm-debug.log*
 .vscode/
 .idea/
 .DS_Store
+
+# Runtime data (Phase 3) — data/paused.json contains contactIds (LGPD: must not be committed)
+data/
