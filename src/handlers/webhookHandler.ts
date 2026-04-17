@@ -76,6 +76,14 @@ export async function handleWebhookAsync(body: unknown): Promise<void> {
   }
   recordSeen(msg.id);
 
+  // Guard 5: empty text body (WR-03)
+  // WhatsApp occasionally delivers chat-typed messages with no text (e.g. corrupted delivery).
+  // Sending an empty user turn to OpenAI wastes tokens and pollutes history.
+  if (!msg.text.trim()) {
+    logger.debug({ messageId: msg.id }, 'discarded: empty text body');
+    return;
+  }
+
   // All guards passed — process.
   // CR-01: Message SDK type has no contactId field — Digisac sends it as an undeclared extra
   // field on the flat payload. Cast through unknown to acknowledge the gap between SDK types
