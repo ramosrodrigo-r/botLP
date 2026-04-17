@@ -39,11 +39,11 @@
 
 ### Handoff para Humano
 
-- [ ] **HAND-01**: IA sinaliza necessidade de handoff com marcador `[HANDOFF]` na resposta quando não consegue ajudar
-- [ ] **HAND-02**: Sistema detecta o marcador, remove-o da mensagem e pausa o bot para aquele contactId
-- [ ] **HAND-03**: Bot envia mensagem ao lead informando que um advogado irá assumir o atendimento
+- [x] **HAND-01**: IA sinaliza necessidade de handoff com marcador `[HANDOFF]` na resposta quando não consegue ajudar
+- [x] **HAND-02**: Sistema detecta o marcador, remove-o da mensagem e pausa o bot para aquele contactId
+- [x] **HAND-03**: Bot envia mensagem ao lead informando que um advogado irá assumir o atendimento
 - [x] **HAND-04**: Estado de pausa por contactId é persistido em arquivo (sobrevive a restart/deploy do servidor)
-- [ ] **HAND-05**: Sistema ignora novas mensagens de leads com handoff ativo (não chama Claude nem envia resposta)
+- [x] **HAND-05**: Sistema ignora novas mensagens de leads com handoff ativo (não chama Claude nem envia resposta)
 
 ### Observabilidade
 
@@ -102,11 +102,11 @@
 | QUAL-03 | Phase 2 | Complete |
 | QUAL-04 | Phase 2 | Complete |
 | QUAL-05 | Phase 2 | Complete |
-| HAND-01 | Phase 3 | Pending |
-| HAND-02 | Phase 3 | Pending |
-| HAND-03 | Phase 3 | Pending |
+| HAND-01 | Phase 3 | Complete |
+| HAND-02 | Phase 3 | Complete |
+| HAND-03 | Phase 3 | Complete |
 | HAND-04 | Phase 3 | Complete |
-| HAND-05 | Phase 3 | Pending |
+| HAND-05 | Phase 3 | Complete |
 | OBS-01 | Phase 1 | Complete |
 | OBS-02 | Phase 1 | Complete |
 
