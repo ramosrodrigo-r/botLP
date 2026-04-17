@@ -24,18 +24,18 @@
 ### Conversa & IA
 
 - [x] **CONV-01**: Sistema mantém histórico de conversa por contactId (máximo 20 turnos, com TTL de inatividade)
-- [ ] **CONV-02**: Sistema usa mutex por contactId para evitar race conditions quando duas mensagens chegam simultâneas
-- [ ] **CONV-03**: Histórico é passado à Claude API a cada mensagem, mantendo contexto da conversa
+- [x] **CONV-02**: Sistema usa mutex por contactId para evitar race conditions quando duas mensagens chegam simultâneas
+- [x] **CONV-03**: Histórico é passado à Claude API a cada mensagem, mantendo contexto da conversa
 - [x] **CONV-04**: System prompt é configurável via variável de ambiente `SYSTEM_PROMPT`
-- [ ] **CONV-05**: Sistema trata erro 429 (rate limit OpenAI) enviando mensagem de fallback ao lead e registrando para follow-up
+- [x] **CONV-05**: Sistema trata erro 429 (rate limit OpenAI) enviando mensagem de fallback ao lead e registrando para follow-up
 
 ### Qualificação de Lead
 
-- [ ] **QUAL-01**: Bot coleta nome do lead durante a conversa de forma natural (não como formulário)
-- [ ] **QUAL-02**: Bot identifica a área jurídica do caso (ex: trabalhista, família, cível, criminal)
-- [ ] **QUAL-03**: Bot avalia urgência do caso (imediata, semanas, planejamento)
-- [ ] **QUAL-04**: Bot determina intenção de contratar (somente consulta, quer contratar, ainda pesquisando)
-- [ ] **QUAL-05**: Bot conduz o fluxo de qualificação progressivamente — coleta dados ao longo da conversa, não em bloco
+- [x] **QUAL-01**: Bot coleta nome do lead durante a conversa de forma natural (não como formulário)
+- [x] **QUAL-02**: Bot identifica a área jurídica do caso (ex: trabalhista, família, cível, criminal)
+- [x] **QUAL-03**: Bot avalia urgência do caso (imediata, semanas, planejamento)
+- [x] **QUAL-04**: Bot determina intenção de contratar (somente consulta, quer contratar, ainda pesquisando)
+- [x] **QUAL-05**: Bot conduz o fluxo de qualificação progressivamente — coleta dados ao longo da conversa, não em bloco
 
 ### Handoff para Humano
 
@@ -93,15 +93,15 @@
 | COMP-03 | Phase 1 | Complete |
 | COMP-04 | Phase 1 | Complete |
 | CONV-01 | Phase 2 | Complete |
-| CONV-02 | Phase 2 | Pending |
-| CONV-03 | Phase 2 | Pending |
+| CONV-02 | Phase 2 | Complete |
+| CONV-03 | Phase 2 | Complete |
 | CONV-04 | Phase 2 | Complete |
-| CONV-05 | Phase 2 | Pending |
-| QUAL-01 | Phase 2 | Pending |
-| QUAL-02 | Phase 2 | Pending |
-| QUAL-03 | Phase 2 | Pending |
-| QUAL-04 | Phase 2 | Pending |
-| QUAL-05 | Phase 2 | Pending |
+| CONV-05 | Phase 2 | Complete |
+| QUAL-01 | Phase 2 | Complete |
+| QUAL-02 | Phase 2 | Complete |
+| QUAL-03 | Phase 2 | Complete |
+| QUAL-04 | Phase 2 | Complete |
+| QUAL-05 | Phase 2 | Complete |
 | HAND-01 | Phase 3 | Pending |
 | HAND-02 | Phase 3 | Pending |
 | HAND-03 | Phase 3 | Pending |

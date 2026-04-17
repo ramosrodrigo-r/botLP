@@ -13,7 +13,7 @@ Build a WhatsApp lead qualification bot for a law firm in four phases: first sec
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Webhook Infrastructure + Compliance Foundation** - Secure webhook receiver with four-layer guard, OAB/LGPD compliance embedded at entry (completed 2026-04-16)
-- [ ] **Phase 2: Conversation History + AI Pipeline** - Full end-to-end WhatsApp → Claude → WhatsApp flow with mutex-protected history
+- [x] **Phase 2: Conversation History + AI Pipeline** - Full end-to-end WhatsApp → Claude → WhatsApp flow with mutex-protected history (completed 2026-04-17)
 - [ ] **Phase 3: Lead Qualification + Handoff** - Natural intake qualification via prompt engineering and human handoff with persistent pause state
 - [ ] **Phase 4: Production Hardening** - Railway deploy, adversarial testing, and compliance verification before law firm goes live
 
@@ -45,10 +45,10 @@ Plans:
   3. A simulated OpenAI 429 error sends a graceful fallback message to the lead and logs the event for follow-up — without crashing the server
   4. The system prompt is sourced from the SYSTEM_PROMPT env var; changing it without code changes alters bot behavior on the next message
   5. After a full exchange, the bot has gathered lead name, case area, urgency level, and hiring intent through natural conversation (not form-style prompting)
-**Plans:** 1/2 plans executed
+**Plans:** 2/2 plans complete
 Plans:
 - [x] 02-01-PLAN.md — Create sessionService (unified SessionState) + refactor complianceService + add OPENAI_FALLBACK_MESSAGE env var
-- [ ] 02-02-PLAN.md — Install async-mutex, rewrite aiService with mutex/TTL/429 handling, wire webhookHandler + SYSTEM_PROMPT placeholder for QUAL-01..05
+- [x] 02-02-PLAN.md — Install async-mutex, rewrite aiService with mutex/TTL/429 handling, wire webhookHandler + SYSTEM_PROMPT placeholder for QUAL-01..05
 **UI hint**: no
 
 ### Phase 3: Lead Qualification + Handoff
@@ -81,6 +81,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Webhook Infrastructure + Compliance Foundation | 3/3 | Complete   | 2026-04-16 |
-| 2. Conversation History + AI Pipeline | 1/2 | In Progress|  |
+| 2. Conversation History + AI Pipeline | 2/2 | Complete   | 2026-04-17 |
 | 3. Lead Qualification + Handoff | 0/TBD | Not started | - |
 | 4. Production Hardening | 0/TBD | Not started | - |
