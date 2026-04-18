@@ -49,7 +49,10 @@ const EnvSchema = z.object({
   // mensagens de demais contactIds são descartadas silenciosamente no Guard 0.
   // Usado para testar o fluxo completo no Railway com tráfego Digisac real antes do go-live (D-12).
   // Desabilitar antes de apontar Digisac para produção (gate D-13).
-  SANDBOX_MODE: z.coerce.boolean().default(false),
+  SANDBOX_MODE: z
+    .string()
+    .default('false')
+    .transform((val) => val.toLowerCase() === 'true'),
   SANDBOX_NUMBERS: z.string().default(''),
 
   // Server
