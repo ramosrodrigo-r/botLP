@@ -15,7 +15,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 1: Webhook Infrastructure + Compliance Foundation** - Secure webhook receiver with four-layer guard, OAB/LGPD compliance embedded at entry (completed 2026-04-16)
 - [x] **Phase 2: Conversation History + AI Pipeline** - Full end-to-end WhatsApp → Claude → WhatsApp flow with mutex-protected history (completed 2026-04-17)
 - [x] **Phase 3: Lead Qualification + Handoff** - Natural intake qualification via prompt engineering and human handoff with persistent pause state (completed 2026-04-17)
-- [ ] **Phase 4: Production Hardening** - Railway deploy, adversarial testing, and compliance verification before law firm goes live
+- [x] **Phase 4: Production Hardening** - Railway deploy, adversarial testing, and compliance verification before law firm goes live (completed 2026-04-18)
 
 ## Phase Details
 
@@ -74,11 +74,11 @@ Plans:
   2. Structured pino logs for a full lead interaction — webhook receipt, OpenAI call, Digisac send, handoff trigger — are readable and filterable in Railway log viewer
   3. Three adversarial prompts designed to elicit legal opinions receive responses that contain the disclaimer and redirect to human contact without giving opinions
   4. The Digisac origin field filter behavior (isFromMe + agent-origin messages) is confirmed against real traffic and logged behavior matches expected filtering
-**Plans:** 1/3 plans executed
+**Plans:** 3/3 plans complete
 Plans:
 - [x] 04-01-PLAN.md — Env vars SANDBOX_MODE/SANDBOX_NUMBERS + GET /health antes do rate-limit + bind 0.0.0.0 + Guard 0 (sandbox) no webhookHandler
 - [x] 04-02-PLAN.md — railway.json + .env.example atualizado + checkpoint de configuração do projeto no Railway (volume /data, env vars, deploy inicial)
-- [ ] 04-03-PLAN.md — Docs (GO-LIVE-CHECKLIST, ADVERSARIAL-TESTS, COMPLIANCE-TEXTS) + 3 testes adversariais + validação do filtro isFromMe + checkpoint final de go-live
+- [x] 04-03-PLAN.md — Docs (GO-LIVE-CHECKLIST, ADVERSARIAL-TESTS, COMPLIANCE-TEXTS) + 3 testes adversariais + validação do filtro isFromMe + checkpoint final de go-live
 
 ## Progress
 
@@ -90,4 +90,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 | 1. Webhook Infrastructure + Compliance Foundation | 3/3 | Complete   | 2026-04-16 |
 | 2. Conversation History + AI Pipeline | 2/2 | Complete   | 2026-04-17 |
 | 3. Lead Qualification + Handoff | 2/2 | Complete   | 2026-04-17 |
-| 4. Production Hardening | 2/3 | In Progress|  |
+| 4. Production Hardening | 3/3 | Complete   | 2026-04-18 |
