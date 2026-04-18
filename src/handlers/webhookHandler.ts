@@ -83,15 +83,16 @@ export async function handleWebhookAsync(body: unknown): Promise<void> {
   const payload = body as WebhookPayload;
 
   // Guard 0: sandbox mode (Phase 4 — D-11).
-  // Primeiro guard da chain — rejeita tudo que não é contactId de teste antes de qualquer lógica
-  // (comparação de string é o filtro mais barato disponível).
-  // O contactId é extraído aqui via o mesmo cast do Guard 6 (CR-01: SDK não declara o campo).
-  // Se contactId for undefined (payload de ping/teste sem o campo), descartar silenciosamente —
-  // não é erro (RESEARCH.md Pitfall 5).
+  // Primeiro guard da chain — rejeita mensagens de contactIds fora da lista de teste.
+  // O contactId é extraído via o mesmo cast do Guard 6 (CR-01: SDK não declara o campo).
+  // Se contactId for undefined, o payload não é uma mensagem de usuário (p.ex., evento de
+  // controle sem o campo) — deixar os guards subsequentes decidirem (Guard 1 descartará
+  // eventos não-message.created). WR-01: não descartar payloads sem contactId aqui.
   if (env.SANDBOX_MODE) {
     const sandboxContactId =
       (payload.data as Record<string, unknown>)['contactId'] as string | undefined;
-    if (!sandboxContactId || !sandboxNumbers.has(sandboxContactId)) {
+    // Se não há contactId, não é uma mensagem de usuário — deixa Guard 1 decidir.
+    if (sandboxContactId !== undefined && !sandboxNumbers.has(sandboxContactId)) {
       logger.debug(
         { event: 'sandbox_blocked', contactId: sandboxContactId },
         'discarded: sandbox mode active',
