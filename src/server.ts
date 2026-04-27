@@ -17,6 +17,14 @@ import { loadFromDisk } from './services/handoffService.js';
 
 const app = express();
 
+// Railway termina TLS num proxy reverso e injeta X-Forwarded-For com o IP real
+// do cliente. Sem trust proxy, req.ip vira o IP do proxy do Railway e
+// express-rate-limit (1) trata todos os clientes como o mesmo IP e (2) lança
+// ERR_ERL_UNEXPECTED_X_FORWARDED_FOR. Valor "1" = confia em 1 hop (o do Railway),
+// não em headers arbitrários — recomendação oficial do express-rate-limit pra
+// setups single-proxy.
+app.set('trust proxy', 1);
+
 /**
  * Middleware chain (order is intentional):
  *   1. helmet()           — HTTP security headers (OWASP defaults)
