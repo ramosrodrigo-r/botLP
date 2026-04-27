@@ -1,15 +1,18 @@
 ---
-status: deferred
+status: testing
 phase: 02-conversation-history-ai-pipeline
 source: [02-VERIFICATION.md]
 started: 2026-04-17T00:00:00Z
-updated: 2026-04-17T00:00:00Z
-deferred_reason: Requires live Digisac webhook connection. Will be validated on Railway deploy.
+updated: 2026-04-20T00:00:00Z
 ---
 
 ## Current Test
 
-Deferred to deploy — testes requerem Digisac real conectado via webhook.
+number: 1
+name: Concurrent Message Mutex Test (CONV-02)
+expected: |
+  Two replies arrive; the second reply acknowledges or builds on the first message's content; no duplicate or interleaved history contamination
+awaiting: user response
 
 ## Tests
 
