@@ -112,6 +112,7 @@ None yet.
 | # | Description | Date | Commit | Directory |
 |---|-------------|------|--------|-----------|
 | 260428-fjm | Gerar system prompt estruturado para o agente de IA | 2026-04-28 | 36a339b | [260428-fjm-system-prompt-estruturado](./quick/260428-fjm-system-prompt-estruturado/) |
+| 260428-kw2 | Unificar onboarding: remover LGPD_CONSENT_MESSAGE, adicionar ONBOARDING_MESSAGE | 2026-04-28 | 097b128 | [260428-kw2-unificar-onboarding](./quick/260428-kw2-unificar-onboarding/) |
 
 ### Blockers/Concerns
 
