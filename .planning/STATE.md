@@ -111,6 +111,7 @@ None yet.
 
 | # | Description | Date | Commit | Directory |
 |---|-------------|------|--------|-----------|
+| 260428-fjm | Gerar system prompt estruturado para o agente de IA | 2026-04-28 | 36a339b | [260428-fjm-system-prompt-estruturado](./quick/260428-fjm-system-prompt-estruturado/) |
 
 ### Blockers/Concerns
 
