@@ -107,6 +107,11 @@ Recent decisions affecting current work:
 
 None yet.
 
+### Quick Tasks Completed
+
+| # | Description | Date | Commit | Directory |
+|---|-------------|------|--------|-----------|
+
 ### Blockers/Concerns
 
 - Phase 1: OAB-compliant Portuguese wording for AI disclosure and LGPD consent not yet reviewed with the law firm — exact language needs stakeholder sign-off before production
