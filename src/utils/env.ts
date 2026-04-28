@@ -25,7 +25,7 @@ const EnvSchema = z.object({
 
   // Compliance texts (D-02, D-03 — placeholder values in .env.example, stakeholder review before production)
   DISCLOSURE_MESSAGE: z.string().min(1),
-  LGPD_CONSENT_MESSAGE: z.string().min(1),
+  ONBOARDING_MESSAGE: z.string().min(1),
   LEGAL_DISCLAIMER: z.string().min(1),
   SYSTEM_PROMPT: z.string().min(1),
 

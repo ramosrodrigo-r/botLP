@@ -5,21 +5,21 @@ import { getOrCreateSession } from './sessionService.js';
 import { __resetSessionStoreForTesting } from './sessionService.js';
 
 /**
- * Runs the OAB disclosure + LGPD consent flow for a contact.
+ * Runs the onboarding flow for a new contact.
  *
  * Decisions implemented:
- * - D-05: Any reply after the consent prompt counts as implicit acceptance.
+ * - D-05: Any reply after the onboarding prompt counts as implicit acceptance.
  *   No keyword matching required — reduces friction; suitable for WhatsApp.
  * - D-06: If a message arrives without disclosureSent (fresh state / restart),
- *   send disclosure + consent and return false. Next message = implicit consent.
+ *   send disclosure + onboarding message and return false. Next message = implicit consent.
  * - D-07: State is in-memory; restart clears it (acceptable v1 UX).
  *
  * Returns:
  *   true  — caller should proceed to AI processing (consent is given).
- *   false — compliance messaging was just sent; stop here and await next message.
+ *   false — onboarding messaging was just sent; stop here and await next message.
  *
  * COMP-01: disclosure sent on first interaction per contact.
- * COMP-02: LGPD consent prompt sent before any data collection; implicit accept.
+ * COMP-02: onboarding prompt sent before any data collection; implicit accept on reply.
  *
  * State now lives in sessionService (SessionState.disclosureSent, SessionState.consentGiven).
  * No internal Map — this module is stateless. Phase 2 TTL reset (D-04) in aiService.ts
@@ -30,9 +30,9 @@ export async function runComplianceFlow(contactId: string): Promise<boolean> {
   const session = getOrCreateSession(contactId);
 
   if (!session.disclosureSent) {
-    log.info('new contact — sending AI disclosure and LGPD consent prompt');
+    log.info('new contact — sending disclosure and onboarding message');
     await sendMessage(contactId, env.DISCLOSURE_MESSAGE);
-    await sendMessage(contactId, env.LGPD_CONSENT_MESSAGE);
+    await sendMessage(contactId, env.ONBOARDING_MESSAGE);
     session.disclosureSent = true;
     // consentGiven stays false — the user's NEXT message is the implicit consent (D-05/D-06).
     return false;
@@ -41,7 +41,7 @@ export async function runComplianceFlow(contactId: string): Promise<boolean> {
   if (!session.consentGiven) {
     // D-05/D-06: any subsequent message = implicit consent. Proceed to AI.
     session.consentGiven = true;
-    log.info('implicit LGPD consent recorded (any reply after consent prompt)');
+    log.info('implicit consent recorded (any reply after onboarding prompt)');
     return true;
   }
 
